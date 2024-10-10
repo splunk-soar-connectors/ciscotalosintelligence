@@ -8,9 +8,12 @@
     "logo_dark": "talosintelligence_dark.svg",
     "product_name": "Talos Cloud Intelligence",
     "python_version": "3",
+    "latest_tested_versions": [
+        "Cloud, Sept 9, 2024"
+    ],
     "product_version_regex": ".*",
-    "publisher": "Splunk Community",
-    "license": "Copyright (c) Splunk Community, 2024",
+    "publisher": "Splunk",
+    "license": "Copyright (c) 2024 Splunk Inc.",
     "app_version": "1.0.1",
     "utctime_updated": "2024-06-21T18:40:03.685771Z",
     "package_name": "phantom_ciscotalosintelligence",
@@ -50,6 +53,12 @@
             "description": "Private key to authenticate with Talos",
             "name": "key",
             "id": 2
+        },
+        "verify_server_cert": {
+            "description": "Verify server certificate",
+            "data_type": "boolean",
+            "default": false,
+            "order": 3
         }
     },
     "actions": [
@@ -57,7 +66,7 @@
             "action": "test connectivity",
             "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
-            "verbose": "",
+            "verbose": "Action uses the URS API to get a list of the AUP categories used to classify website content.",
             "type": "test",
             "read_only": true,
             "parameters": {},
@@ -67,8 +76,8 @@
         {
             "action": "ip reputation",
             "identifier": "ip_reputation",
-            "description": "Queries IP info",
-            "verbose": "",
+            "description": "Query IP info",
+            "verbose": "Provide information on an IP address's reputation, enabling you to take proper action against untrusted, and unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -154,8 +163,8 @@
         {
             "action": "domain reputation",
             "identifier": "domain_reputation",
-            "description": "Queries domain info",
-            "verbose": "",
+            "description": "Query domain info",
+            "verbose": "Provide information on a domain's reputation, enabling you to take proper action against untrusted, and unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -258,8 +267,8 @@
         {
             "action": "url reputation",
             "identifier": "url_reputation",
-            "description": "Queries URL info",
-            "verbose": "",
+            "description": "Query URL info",
+            "verbose": "Provide information on an URL's reputation, enabling you to take proper action against untrusted, and unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
