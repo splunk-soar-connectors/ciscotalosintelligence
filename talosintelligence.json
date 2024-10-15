@@ -181,15 +181,6 @@
                     "default": "",
                     "order": 0,
                     "name": "domain"
-                },
-                "ips": {
-                    "description": "Corresponding IPs to the domain. A domain may have a different reputation based on the IP it resolves to. Passing an IP can improve the accuracy of the response",
-                    "data_type": "string",
-                    "primary": true,
-                    "value_list": [],
-                    "default": "",
-                    "order": 1,
-                    "name": "ips"
                 }
             },
             "output": [
@@ -199,13 +190,6 @@
                     "contains": [
                         "domain",
                         "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.ips",
-                    "data_type": "string",
-                    "contains": [
-                        "ips"
                     ]
                 },
                 {
@@ -284,15 +268,6 @@
                     "default": "",
                     "order": 0,
                     "name": "url"
-                },
-                "ips": {
-                    "description": "Corresponding IPs to the url. A domain may have a different reputation based on the IP it resolves to. Passing an IP can improve the accuracy of the response",
-                    "data_type": "string",
-                    "primary": true,
-                    "value_list": [],
-                    "default": "",
-                    "order": 1,
-                    "name": "ips"
                 }
             },
             "output": [
@@ -301,13 +276,6 @@
                     "data_type": "string",
                     "contains": [
                         "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.ips",
-                    "data_type": "string",
-                    "contains": [
-                        "ips"
                     ]
                 },
                 {

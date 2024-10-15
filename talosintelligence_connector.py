@@ -15,8 +15,6 @@
 #
 #
 # Phantom App imports
-import ipaddress
-import json
 import os
 
 # Phantom App imports
@@ -231,9 +229,18 @@ class TalosIntelligenceConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         self.save_progress("Connecting to endpoint")
 
+        prev_perf_testing_val = self._appinfo["perf_testing"]
+        self._appinfo["perf_testing"] = True
+
+        payload = {
+            "urls": [{"raw_url": "cisco.com"}],
+            "app_info": self._appinfo
+        }
         ret_val, response = self._make_rest_call_helper(
-            ENDPOINT_QUERY_AUP_CAT_MAP, action_result, "post", json={"app_info": self._appinfo}
+            ENDPOINT_QUERY_REPUTATION_V3, action_result, method="post", json=payload
         )
+
+        self._appinfo["perf_testing"] = prev_perf_testing_val
 
         if phantom.is_fail(ret_val):
             self.save_progress("Test Connectivity Failed.")
@@ -293,21 +300,8 @@ class TalosIntelligenceConnector(BaseConnector):
         domain = param['domain']
         if not self._is_valid_domain(domain):
             return action_result.set_status(phantom.APP_ERROR, "Please provide a valid url")
-        ips = param.get("ips", "")
-        ips_list = [item.strip() for item in ips.split(',') if item.strip()]
+
         url_entry = {"raw_url": domain}
-
-        endpoints = []
-        for ip in ips_list:
-            try:
-                ip_addr = ipaddress.ip_address(ip)
-                ip_request = self.format_ip_type(ip_addr)
-                endpoints.append(ip_request)
-            except Exception as exc:
-                self.debug_print(f"{ip} is not a valid ip address got. Error: {exc}")
-
-        if endpoints:
-            url_entry["endpoint"] = endpoints
 
         payload = {
             "urls": [],
@@ -336,21 +330,7 @@ class TalosIntelligenceConnector(BaseConnector):
         if not self._is_valid_url(url):
             return action_result.set_status(phantom.APP_ERROR, "Please provide a valid url")
 
-        ips = param.get("ips", "")
-        ips_list = [item.strip() for item in ips.split(',') if item.strip()]
         url_entry = {"raw_url": url}
-
-        endpoints = []
-        for ip in ips_list:
-            try:
-                ip_addr = ipaddress.ip_address(ip)
-                ip_request = self.format_ip_type(ip_addr)
-                endpoints.append(ip_request)
-            except Exception as exc:
-                self.debug_print(f"{ip} is not a valid ip address. Error: {exc}")
-
-        if endpoints:
-            url_entry["endpoint"] = endpoints
 
         payload = {
             "urls": [],
@@ -563,7 +543,7 @@ class TalosIntelligenceConnector(BaseConnector):
             "product_family": "splunk",
             "product_id": "soar",
             "device_id": self.get_product_installation_id(),
-            "product_version": self.get_product_version(),
+            "product_version": self.get_app_json()["app_version"],
             "perf_testing": False,
         }
         if is_dev_env:
