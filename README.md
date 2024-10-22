@@ -1,5 +1,5 @@
 [comment]: # "Auto-generated SOAR connector documentation"
-# Talos Intelligence V2
+# Cisco Talos Intelligence
 
 Publisher: Splunk  
 Connector Version: 1.0.1  
@@ -75,7 +75,7 @@ Provide information on an IP address's reputation, enabling you to take proper a
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**ip** |  required  | IP to query | string |  `ip` 
+**ip** |  required  | IP to query | string |  `ip`  `ipv6` 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
@@ -85,9 +85,11 @@ action_result.status | string |  |
 action_result.message | string |  |  
 summary.total_objects | numeric |  |  
 summary.total_objects_successful | numeric |  |  
-action_result.data.0.Threat Level | string |  |  
-action_result.data.1.Threat Categories | string |  |  
-action_result.data.2.Acceptable Use Policy Categories | string |  |    
+action_result.data.\*.Observable | string |  |  
+action_result.data.\*.Threat_Level | string |  |  
+action_result.data.\*.Threat_Categories | string |  |  
+action_result.data.\*.AUP | string |  |  
+action_result.summary.message | string |  |   72.163.4.185 has a Favorable threat level   
 
 ## action: 'domain reputation'
 Query domain info
@@ -110,9 +112,11 @@ action_result.status | string |  |
 action_result.message | string |  |  
 summary.total_objects | numeric |  |  
 summary.total_objects_successful | numeric |  |  
-action_result.data.0.Threat Level | string |  |  
-action_result.data.1.Threat Categories | string |  |  
-action_result.data.2.Acceptable Use Policy Categories | string |  |    
+action_result.data.\*.Observable | string |  |  
+action_result.data.\*.Threat_Level | string |  |  
+action_result.data.\*.Threat_Categories | string |  |  
+action_result.data.\*.AUP | string |  |  
+action_result.summary.message | string |  |   splunk.com has a Favorable threat level   
 
 ## action: 'url reputation'
 Query URL info
@@ -135,6 +139,8 @@ action_result.status | string |  |
 action_result.message | string |  |  
 summary.total_objects | numeric |  |  
 summary.total_objects_successful | numeric |  |  
-action_result.data.0.Threat Level | string |  |  
-action_result.data.1.Threat Categories | string |  |  
-action_result.data.2.Acceptable Use Policy Categories | string |  |  
+action_result.data.\*.Observable | string |  |  
+action_result.data.\*.Threat_Level | string |  |  
+action_result.data.\*.Threat_Categories | string |  |  
+action_result.data.\*.AUP | string |  |  
+action_result.summary.message | string |  |   https://splunk.com has a Favorable threat level 
