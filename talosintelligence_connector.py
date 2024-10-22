@@ -348,7 +348,6 @@ class TalosIntelligenceConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _query_reputation(self, action_result, payload, observable=None):
-        new_tax_fetched = False
 
         taxonomy_ret_val, taxonomy = self._fetch_taxonomy(action_result)
 
@@ -365,7 +364,6 @@ class TalosIntelligenceConnector(BaseConnector):
         response_taxonomy_map_version = response["taxonomy_map_version"]
 
         if response_taxonomy_map_version > self._state["taxonomy_version"]:
-            new_tax_fetched = True
             taxonomy_ret_val, taxonomy = self._fetch_taxonomy(action_result, allow_cache=False)
 
         if phantom.is_fail(ret_val) or "results" not in response:
@@ -385,15 +383,7 @@ class TalosIntelligenceConnector(BaseConnector):
                         continue
 
                     if not taxonomy["taxonomies"][tax_id]["is_avail"]:
-                        tax_starting_availability = taxonomy["taxonomies"][tax_id]["vers_avail"]["starting"]
-                        if tax_starting_availability > taxonomy["taxonomies"][tax_id]["version"] and not new_tax_fetched:
-                            taxonomy_ret_val, taxonomy = self._fetch_taxonomy(action_result, allow_cache=False)
-                            new_tax_fetched = True
-                            if not taxonomy["taxonomies"][tax_id]["is_avail"]:
-                                # even after fetching the taxonomy we're looking for isn't available
-                                continue
-                        else:
-                            continue
+                        continue
 
                     category = taxonomy["taxonomies"][tax_id]["name"]["en-us"]["text"]
                     name = taxonomy["taxonomies"][tax_id]["entries"][entry_id]["name"][
@@ -489,19 +479,6 @@ class TalosIntelligenceConnector(BaseConnector):
             self.debug_print("CRL Distribution Points extension not found in the certificate.")
             return []
 
-    def cert_revoked(self, cert, crl_url):
-        response = requests.get(crl_url)
-        response.raise_for_status()
-
-        crl = x509.load_der_x509_crl(response.content, default_backend())
-        revoked_certificates = crl.revoked_certificates or []
-        self.debug_print(f"crl url is {crl} and revoked certs are {revoked_certificates}")
-        for revoked_cert in revoked_certificates:
-            if revoked_cert.serial_number == cert.serial_number:
-                return True
-
-        return False
-
     def initialize(self):
         # Load the state in initialize, use it to store data
         # that needs to be accessed across actions
@@ -527,12 +504,7 @@ class TalosIntelligenceConnector(BaseConnector):
             cert = x509.load_pem_x509_certificate(cert_pem_data, default_backend())
         except Exception as e:
             self.debug_print(f"Error when loadig cert {e}")
-        crl_urls = self.fetch_crls(cert)
-        self.debug_print(f"crl urls are {crl_urls}")
-        for crl in crl_urls:
-            if self.cert_revoked(cert, crl):
-                self.debug_print("Certificate has been revoked. Please get a new one")
-                return phantom.APP_ERROR
+            return phantom.APP_ERROR
 
         is_valid = self.check_certificate_expiry(cert)
         if not is_valid:

@@ -20,6 +20,16 @@
     "main_module": "talosintelligence_connector.py",
     "min_phantom_version": "6.2.1.305",
     "app_wizard_version": "1.0.0",
+    "pip39_dependencies": {
+        "pypi": [
+            {
+                "module": "httpx[http2]"
+            },
+            {
+                "module": "pydantic==1.10.13"
+            }
+        ]
+    },
     "configuration": {
         "base_url": {
             "data_type": "string",
@@ -332,46 +342,5 @@
     "appname": "-",
     "executable": "spawn3",
     "disabled": false,
-    "custom_made": true,
-    "pip_dependencies": {
-        "wheel": [
-            {
-                "module": "beautifulsoup4",
-                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
-            },
-            {
-                "module": "httpx[http2]",
-                "input_file": "wheels/py3/httpx-0.27.2-py3-none-any.whl"
-            },
-            {
-                "module": "pydantic",
-                "input_file": "wheels/py3/pydantic-2.9.2-py3-none-any.whl"
-            },
-            {
-                "module": "cryptography",
-                "input_file": "wheels/py39/cryptography-43.0.1-cp39-abi3-manylinux_2_28_x86_64.whl"
-            }
-            
-        ]
-    },
-    "pip39_dependencies": {
-        "wheel": [
-            {
-                "module": "beautifulsoup4",
-                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
-            },
-            {
-                "module": "httpx[http2]",
-                "input_file":  "wheels/py3/httpx-0.27.2-py3-none-any.whl"
-            },
-            {
-                "module": "pydantic",
-                "input_file": "wheels/py3/pydantic-2.9.2-py3-none-any.whl"
-            },
-            {
-                "module": "cryptography",
-                "input_file": "wheels/py39/cryptography-43.0.1-cp39-abi3-manylinux_2_28_x86_64.whl"
-            }
-        ]
-    }
+    "custom_made": true
 }
