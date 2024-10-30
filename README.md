@@ -8,7 +8,7 @@ Product Name: Talos Cloud Intelligence
 Product Version Supported (regex): ".\*"  
 Minimum Product Version: 6.2.1.305  
 
-This app provides investigative actions for Cisco Talos Intelligence
+This app provides investigative actions for Cisco Talos Cloud Intelligence
 
 [comment]: # " File: README.md"
 [comment]: # "Copyright (c) 2024 Splunk Inc."
@@ -42,11 +42,12 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **base_url** |  required  | string | Base URL provided by Talos
 **certificate** |  optional  | password | Certificate contents to authenticate with Talos
 **key** |  optional  | password | Private key to authenticate with Talos
+**verify_server_cert** |  optional  | boolean | Verify server certificate
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
-[ip reputation](#action-ip-reputation) - Queries IP info  
-[domain reputation](#action-domain-reputation) - Queries domain info  
+[ip reputation](#action-ip-reputation) - Query IP info  
+[domain reputation](#action-domain-reputation) - Query domain info  
 [url reputation](#action-url-reputation) - Queries URL info  
 
 ## action: 'test connectivity'
@@ -62,10 +63,12 @@ No parameters are required for this action
 No Output  
 
 ## action: 'ip reputation'
-Queries IP info
+Query IP info
 
 Type: **investigate**  
 Read only: **True**
+
+Provide information on an IP address's reputation, enabling you to take proper action against untrusted, and unwanted resources.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -85,10 +88,12 @@ action_result.data.1.Threat Categories | string |  |
 action_result.data.2.Acceptable Use Policy Categories | string |  |    
 
 ## action: 'domain reputation'
-Queries domain info
+Query domain info
 
 Type: **investigate**  
 Read only: **True**
+
+Provide information on a domain's reputation, enabling you to take proper action against untrusted, and unwanted resources.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
