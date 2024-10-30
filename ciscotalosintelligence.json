@@ -1,19 +1,22 @@
 {
     "appid": "7c653487-22c8-4ec1-bca0-16a8b1513c86",
     "name": "Cisco Talos Intelligence",
-    "description": "This app provides investigative actions for Cisco Talos Intelligence",
+    "description": "This app provides investigative actions for Cisco Talos Cloud Intelligence",
     "type": "information",
     "product_vendor": "Cisco",
     "logo": "ciscotalosintelligence.svg",
     "logo_dark": "ciscotalosintelligence_dark.svg",
     "product_name": "Talos Cloud Intelligence",
-    "python_version": "3",
+    "python_version": "3",    "latest_tested_versions": [
+        "Cloud, October 30, 2024"
+    ],
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) Splunk, 2024",
+    "license": "Copyright (c) 2024 Splunk Inc.",
     "app_version": "1.0.1",
     "utctime_updated": "2024-06-21T18:40:03.685771Z",
     "package_name": "phantom_ciscotalosintelligence",
+    "fips_compliant": false,
     "main_module": "ciscotalosintelligence_connector.py",
     "min_phantom_version": "6.2.1.305",
     "app_wizard_version": "1.0.0",
@@ -40,6 +43,12 @@
             "description": "Private key to authenticate with Talos",
             "name": "key",
             "id": 2
+        },
+        "verify_server_cert": {
+            "description": "Verify server certificate",
+            "data_type": "boolean",
+            "default": false,
+            "order": 3
         }
     },
     "actions": [
@@ -57,8 +66,8 @@
         {
             "action": "ip reputation",
             "identifier": "ip_reputation",
-            "description": "Queries IP info",
-            "verbose": "",
+            "description": "Query IP info",
+            "verbose": "Provide information on an IP address's reputation, enabling you to take proper action against untrusted, and unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -131,8 +140,8 @@
         {
             "action": "domain reputation",
             "identifier": "domain_reputation",
-            "description": "Queries domain info",
-            "verbose": "",
+            "description": "Query domain info",
+            "verbose": "Provide information on a domain's reputation, enabling you to take proper action against untrusted, and unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
