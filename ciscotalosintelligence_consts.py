@@ -1,4 +1,4 @@
-# File: talosintelligence_consts.py
+# File: ciscotalosintelligence_consts.py
 #
 # Copyright (c) 2024 Splunk Inc.
 #
@@ -14,6 +14,8 @@
 # and limitations under the License.
 #
 #
+
+
 # Define your constants here
 ENDPOINT_QUERY_REPUTATION_V3 = "/Talos.Service.URS/QueryReputationV3"
 ENDPOINT_QUERY_AUP_CAT_MAP = "/Talos.Service.URS/QueryAUPCatMap"

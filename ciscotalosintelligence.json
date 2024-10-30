@@ -1,7 +1,7 @@
 {
     "appid": "7c653487-22c8-4ec1-bca0-16a8b1513c86",
     "name": "Cisco Talos Intelligence",
-    "description": "This app provides investigative actions for Talos Cloud Intelligence",
+    "description": "This app provides investigative actions for Cisco Talos Cloud Intelligence",
     "type": "information",
     "product_vendor": "Cisco",
     "logo": "ciscotalosintelligence.svg",
@@ -9,7 +9,7 @@
     "product_name": "Talos Cloud Intelligence",
     "python_version": "3",
     "latest_tested_versions": [
-        "Cloud, Sept 9, 2024"
+        "Cloud, October 30, 2024"
     ],
     "product_version_regex": ".*",
     "publisher": "Splunk",
@@ -18,7 +18,7 @@
     "utctime_updated": "2024-06-21T18:40:03.685771Z",
     "package_name": "phantom_ciscotalosintelligence",
     "fips_compliant": false,
-    "main_module": "talosintelligence_connector.py",
+    "main_module": "ciscotalosintelligence_connector.py",
     "min_phantom_version": "6.2.1.305",
     "app_wizard_version": "1.0.0",
     "configuration": {
@@ -291,7 +291,7 @@
     ],
     "copied_from_id": 190,
     "copied_from_version": "1.0.0",
-    "directory": "talosintelligence_50612f98-f830-451b-a90c-26cf82593a54",
+    "directory": "ciscotalosintelligence_7c653487-22c8-4ec1-bca0-16a8b1513c86",
     "version": 1,
     "appname": "-",
     "executable": "spawn3",

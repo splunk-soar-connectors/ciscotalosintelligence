@@ -1,4 +1,4 @@
-# File: talosintelligence_connector.py
+# File: ciscotalosintelligence_connector.py
 #
 # Copyright (c) 2024 Splunk Inc.
 #
@@ -14,7 +14,7 @@
 # and limitations under the License.
 #
 #
-# Phantom App imports
+
 import ipaddress
 import json
 import os
@@ -29,7 +29,7 @@ from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
-from talosintelligence_consts import *
+from ciscotalosintelligence_consts import *
 
 
 class RetVal(tuple):
