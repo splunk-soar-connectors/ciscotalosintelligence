@@ -1,5 +1,5 @@
 [comment]: # "Auto-generated SOAR connector documentation"
-# Talos Intelligence V2
+# Cisco Talos Intelligence
 
 Publisher: Splunk  
 Connector Version: 1.0.1  
@@ -8,7 +8,7 @@ Product Name: Talos Cloud Intelligence
 Product Version Supported (regex): ".\*"  
 Minimum Product Version: 6.2.1.305  
 
-This app provides investigative actions for Talos Intelligence
+This app provides investigative actions for Talos Cloud Intelligence
 
 [comment]: # " File: README.md"
 [comment]: # "Copyright (c) 2024 Splunk Inc."
