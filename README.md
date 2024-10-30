@@ -48,13 +48,15 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
 [ip reputation](#action-ip-reputation) - Query IP info  
 [domain reputation](#action-domain-reputation) - Query domain info  
-[url reputation](#action-url-reputation) - Queries URL info  
+[url reputation](#action-url-reputation) - Query URL info  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
 
 Type: **test**  
 Read only: **True**
+
+Action uses the URS API to get a list of the AUP categories used to classify website content.
 
 #### Action Parameters
 No parameters are required for this action
@@ -113,10 +115,12 @@ action_result.data.1.Threat Categories | string |  |
 action_result.data.2.Acceptable Use Policy Categories | string |  |    
 
 ## action: 'url reputation'
-Queries URL info
+Query URL info
 
 Type: **investigate**  
 Read only: **True**
+
+Provide information on an URL's reputation, enabling you to take proper action against untrusted, and unwanted resources.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
