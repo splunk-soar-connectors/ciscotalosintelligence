@@ -7,7 +7,8 @@
     "logo": "ciscotalosintelligence.svg",
     "logo_dark": "ciscotalosintelligence_dark.svg",
     "product_name": "Talos Cloud Intelligence",
-    "python_version": "3",    "latest_tested_versions": [
+    "python_version": "3",
+    "latest_tested_versions": [
         "Cloud, October 30, 2024"
     ],
     "product_version_regex": ".*",
@@ -56,7 +57,7 @@
             "action": "test connectivity",
             "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
-            "verbose": "",
+            "verbose": "Action uses the URS API to get a list of the AUP categories used to classify website content.",
             "type": "test",
             "read_only": true,
             "parameters": {},
@@ -216,8 +217,8 @@
         {
             "action": "url reputation",
             "identifier": "url_reputation",
-            "description": "Queries URL info",
-            "verbose": "",
+            "description": "Query URL info",
+            "verbose": "Provide information on an URL's reputation, enabling you to take proper action against untrusted, and unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
