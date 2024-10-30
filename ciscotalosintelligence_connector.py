@@ -13,6 +13,7 @@ import os
 import tempfile
 
 import httpx
+
 # Phantom App imports
 import phantom.app as phantom
 import requests
@@ -46,9 +47,7 @@ class TalosIntelligenceConnector(BaseConnector):
             return RetVal(phantom.APP_SUCCESS, {})
 
         return RetVal(
-            action_result.set_status(
-                phantom.APP_ERROR, "Empty response and no information in the header"
-            ),
+            action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"),
             None,
         )
 
@@ -65,9 +64,7 @@ class TalosIntelligenceConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(
-            status_code, error_text
-        )
+        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
 
         message = message.replace("{", "{{").replace("}", "}}")
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
@@ -90,9 +87,7 @@ class TalosIntelligenceConnector(BaseConnector):
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         # You should process the error returned in the json
-        message = "Error from server. Status Code: {0} Data from server: {1}".format(
-            r.status_code, r.text.replace("{", "{{").replace("}", "}}")
-        )
+        message = "Error from server. Status Code: {0} Data from server: {1}".format(r.status_code, r.text.replace("{", "{{").replace("}", "}}"))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
@@ -137,9 +132,7 @@ class TalosIntelligenceConnector(BaseConnector):
         # Create a URL to connect to
         url = self._base_url + endpoint
 
-        with tempfile.NamedTemporaryFile(
-            mode="w+", delete=False, suffix="test"
-        ) as temp_file:
+        with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix="test") as temp_file:
             combined_file = (
                 "-----BEGIN CERTIFICATE-----\n"
                 f"{self._certificate}\n"
@@ -201,9 +194,7 @@ class TalosIntelligenceConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_ip_reputation(self, param):
-        self.save_progress(
-            "In action handler for: {0}".format(self.get_action_identifier())
-        )
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         ip = param["ip"]
@@ -213,9 +204,7 @@ class TalosIntelligenceConnector(BaseConnector):
             big_endian = int(ip_addr)
 
         except Exception:
-            return action_result.set_status(
-                phantom.APP_ERROR, "Please provide a valid IP Address"
-            )
+            return action_result.set_status(phantom.APP_ERROR, "Please provide a valid IP Address")
 
         payload = {
             "urls": {"endpoint": [{"ipv4_addr": big_endian}]},
@@ -227,9 +216,7 @@ class TalosIntelligenceConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_domain_reputation(self, param):
-        self.save_progress(
-            "In action handler for: {0}".format(self.get_action_identifier())
-        )
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         domain = param["domain"]
@@ -241,9 +228,7 @@ class TalosIntelligenceConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_url_reputation(self, param):
-        self.save_progress(
-            "In action handler for: {0}".format(self.get_action_identifier())
-        )
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         url = param["url"]
@@ -261,15 +246,11 @@ class TalosIntelligenceConnector(BaseConnector):
             return action_result.get_status()
 
         # make rest call
-        ret_val, response = self._make_rest_call(
-            ENDPOINT_QUERY_REPUTATION_V3, action_result, method="post", json=payload
-        )
+        ret_val, response = self._make_rest_call(ENDPOINT_QUERY_REPUTATION_V3, action_result, method="post", json=payload)
         response_taxonomy_map_version = response["taxonomy_map_version"]
 
         if response_taxonomy_map_version > self._state["taxonomy_version"]:
-            taxonomy_ret_val, taxonomy = self._fetch_taxonomy(
-                action_result, allow_cache=False
-            )
+            taxonomy_ret_val, taxonomy = self._fetch_taxonomy(action_result, allow_cache=False)
 
         if phantom.is_fail(ret_val) or "results" not in response:
             return action_result.get_status()
@@ -290,12 +271,8 @@ class TalosIntelligenceConnector(BaseConnector):
                         continue
 
                     category = taxonomy["taxonomies"][tax_id]["name"]["en-us"]["text"]
-                    name = taxonomy["taxonomies"][tax_id]["entries"][entry_id]["name"][
-                        "en-us"
-                    ]["text"]
-                    description = taxonomy["taxonomies"][tax_id]["entries"][entry_id][
-                        "description"
-                    ]["en-us"]["text"]
+                    name = taxonomy["taxonomies"][tax_id]["entries"][entry_id]["name"]["en-us"]["text"]
+                    description = taxonomy["taxonomies"][tax_id]["entries"][entry_id]["description"]["en-us"]["text"]
 
                     if category == "Threat Levels":
                         threat_level = name
@@ -308,18 +285,10 @@ class TalosIntelligenceConnector(BaseConnector):
             action_result.add_data({"Threat Level": threat_level})
 
             summary["Threat Categories"] = threat_categories
-            action_result.add_data(
-                {"Threat Categories": ", ".join(list(threat_categories.keys()))}
-            )
+            action_result.add_data({"Threat Categories": ", ".join(list(threat_categories.keys()))})
 
             summary["Acceptable Use Policy Categories"] = aup_categories
-            action_result.add_data(
-                {
-                    "Acceptable Use Policy Categories": ", ".join(
-                        list(aup_categories.keys())
-                    )
-                }
-            )
+            action_result.add_data({"Acceptable Use Policy Categories": ", ".join(list(aup_categories.keys()))})
 
     def _fetch_taxonomy(self, action_result, allow_cache=True):
         payload = {"app_info": self._appinfo}
@@ -327,9 +296,7 @@ class TalosIntelligenceConnector(BaseConnector):
         if "taxonomy" in self._state and allow_cache:
             return 1, self._state["taxonomy"]
 
-        ret_val, response = self._make_rest_call(
-            ENDPOINT_QUERY_TAXONOMIES, action_result, method="post", json=payload
-        )
+        ret_val, response = self._make_rest_call(ENDPOINT_QUERY_TAXONOMIES, action_result, method="post", json=payload)
         taxonomy = response["catalogs"][str(self._catalog_id)]
 
         self._state = {"taxonomy": taxonomy, "taxonomy_version": response["version"]}
@@ -366,9 +333,7 @@ class TalosIntelligenceConnector(BaseConnector):
         config = self.get_config()
 
         def insert_newlines(string, every=64):
-            return "\n".join(
-                string[i: i + every] for i in range(0, len(string), every)
-            )
+            return "\n".join(string[i : i + every] for i in range(0, len(string), every))
 
         self._base_url = config["base_url"]
         self._certificate = insert_newlines(config["certificate"])
