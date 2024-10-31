@@ -19,7 +19,7 @@
     "package_name": "phantom_ciscotalosintelligence",
     "fips_compliant": false,
     "main_module": "ciscotalosintelligence_connector.py",
-    "min_phantom_version": "6.2.1.305",
+    "min_phantom_version": "6.2.2",
     "app_wizard_version": "1.0.0",
     "pip39_dependencies": {
         "wheel": [
@@ -95,6 +95,7 @@
             "data_type": "password",
             "order": 1,
             "description": "Certificate contents to authenticate with Talos",
+            "required": true,
             "name": "certificate",
             "id": 1
         },
@@ -102,6 +103,7 @@
             "data_type": "password",
             "order": 2,
             "description": "Private key to authenticate with Talos",
+            "required": true,
             "name": "key",
             "id": 2
         },
@@ -152,7 +154,8 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip"
+                        "ip",
+                        "ipv6"
                     ]
                 },
                 {
