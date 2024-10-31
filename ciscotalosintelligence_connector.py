@@ -1,4 +1,4 @@
-# File: talosintelligence_connector.py
+# File: ciscotalosintelligence_connector.py
 #
 # Copyright (c) 2024 Splunk Inc.
 #
@@ -14,31 +14,30 @@
 # and limitations under the License.
 #
 #
-# Phantom App imports
+
+import ipaddress
+import json
 import os
+import random
+import re
+import tempfile
+import textwrap
+import time
+from datetime import datetime
+from urllib.parse import urlparse
+
+import httpx
 
 # Phantom App imports
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-from phantom_common.install_info import is_dev_env
-
-from talosintelligence_consts import *
-
 import requests
-import json
-from bs4 import BeautifulSoup
-import tempfile
-import httpx
-import ipaddress
-import time
-import textwrap
-import random
-import re
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
-from datetime import datetime
-from urllib.parse import urlparse
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
+from phantom_common.install_info import is_dev_env
+
+from ciscotalosintelligence_consts import *
 
 
 class RetVal(tuple):
@@ -64,11 +63,7 @@ class TalosIntelligenceConnector(BaseConnector):
         if response.status_code == 200:
             return RetVal(phantom.APP_SUCCESS, {})
 
-        return RetVal(
-            action_result.set_status(
-                phantom.APP_ERROR, "Empty response and no information in the header"
-            ), None
-        )
+        return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
 
     def _process_html_response(self, response, action_result):
         # An html response, treat it like an error
@@ -77,15 +72,15 @@ class TalosIntelligenceConnector(BaseConnector):
         try:
             soup = BeautifulSoup(response.text, "html.parser")
             error_text = soup.text
-            split_lines = error_text.split('\n')
+            split_lines = error_text.split("\n")
             split_lines = [x.strip() for x in split_lines if x.strip()]
-            error_text = '\n'.join(split_lines)
+            error_text = "\n".join(split_lines)
         except:
             error_text = "Cannot parse error details"
 
         message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
 
-        message = message.replace(u'{', '{{').replace(u'}', '}}')
+        message = message.replace("{", "{{").replace("}", "}}")
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _process_json_response(self, r, action_result):
@@ -93,57 +88,50 @@ class TalosIntelligenceConnector(BaseConnector):
         try:
             resp_json = r.json()
         except Exception as e:
-            return RetVal(
-                action_result.set_status(
-                    phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(str(e))
-                ), None
-            )
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(str(e))), None)
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         # You should process the error returned in the json
-        message = "Error from server. Status Code: {0} Data from server: {1}".format(
-            r.status_code,
-            r.text.replace(u'{', '{{').replace(u'}', '}}')
-        )
+        message = "Error from server. Status Code: {0} Data from server: {1}".format(r.status_code, r.text.replace("{", "{{").replace("}", "}}"))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _process_response(self, r, action_result, retry=3):
         # store the r_text in debug data, it will get dumped in the logs if the action fails
-        if hasattr(action_result, 'add_debug_data'):
-            action_result.add_debug_data({'r_status_code': r.status_code})
-            action_result.add_debug_data({'r_text': r.text})
-            action_result.add_debug_data({'r_headers': r.headers})
+        if hasattr(action_result, "add_debug_data"):
+            action_result.add_debug_data({"r_status_code": r.status_code})
+            action_result.add_debug_data({"r_text": r.text})
+            action_result.add_debug_data({"r_headers": r.headers})
 
         retryable_error_codes = {2, 4, 8, 9, 13, 14}
 
         if retry < MAX_REQUEST_RETRIES:
-            if r.headers.get('grpc-status', 0) in retryable_error_codes:
-                err_msg = r.headers.get('grpc-message', 'Error')
-                return action_result.set_status(
-                        phantom.APP_ERROR,
-                        f"Got retryable grpc-status of {r.headers['grpc-status']} with message {err_msg}"
-                    ), r
+            if r.headers.get("grpc-status", 0) in retryable_error_codes:
+                err_msg = r.headers.get("grpc-message", "Error")
+                return (
+                    action_result.set_status(
+                        phantom.APP_ERROR, f"Got retryable grpc-status of {r.headers['grpc-status']} with message {err_msg}"
+                    ),
+                    r,
+                )
 
             if r.status_code == 503:
-                return action_result.set_status(
-                        phantom.APP_ERROR, "Got retryable http status code {0}".format(r.status_code)
-                    ), r
+                return action_result.set_status(phantom.APP_ERROR, "Got retryable http status code {0}".format(r.status_code)), r
 
         # Process each 'Content-Type' of response separately
 
         # Process a json response
-        if 'json' in r.headers.get('Content-Type', ''):
+        if "json" in r.headers.get("Content-Type", ""):
             return self._process_json_response(r, action_result)
 
         # Process an HTML response, Do this no matter what the api talks.
         # There is a high chance of a PROXY in between phantom and the rest of
         # world, in case of errors, PROXY's return HTML, this function parses
         # the error and adds it to the action_result.
-        if 'html' in r.headers.get('Content-Type', ''):
+        if "html" in r.headers.get("Content-Type", ""):
             return self._process_html_response(r, action_result)
 
         # it's not content-type that is to be parsed, handle an empty response
@@ -152,8 +140,7 @@ class TalosIntelligenceConnector(BaseConnector):
 
         # everything else is actually an error at this point
         message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
-            r.status_code,
-            r.text.replace('{', '{{').replace('}', '}}')
+            r.status_code, r.text.replace("{", "{{").replace("}", "}}")
         )
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
@@ -173,10 +160,7 @@ class TalosIntelligenceConnector(BaseConnector):
             try:
                 request_func = getattr(self.client, method)
 
-                r = request_func(
-                    url,
-                    **kwargs
-                )
+                r = request_func(url, **kwargs)
                 self.debug_print(f"got this return value {r}")
             except Exception as e:
                 self.debug_print(f"Retrying to establish connection to the server for the {i + 1} time")
@@ -191,16 +175,14 @@ class TalosIntelligenceConnector(BaseConnector):
                     temp_file.write(cert)
                     temp_file.seek(0)  # Move the file pointer to the beginning for reading
                     temp_file_path = temp_file.name  # Get the name of the temporary file
-                self.client = httpx.Client(http2=True, verify=config.get('verify_server_cert', False), cert=temp_file_path)
+                self.client = httpx.Client(http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path)
 
                 if os.path.exists(temp_file_path):
                     os.remove(temp_file_path)
 
                 if i == MAX_CONNECTION_RETIRIES - 1:
                     return RetVal(
-                        action_result.set_status(
-                            phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(str(e))
-                        ), resp_json
+                        action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(str(e))), resp_json
                     )
 
         return self._process_response(r, action_result, retry)
@@ -232,13 +214,8 @@ class TalosIntelligenceConnector(BaseConnector):
         prev_perf_testing_val = self._appinfo["perf_testing"]
         self._appinfo["perf_testing"] = True
 
-        payload = {
-            "urls": [{"raw_url": "cisco.com"}],
-            "app_info": self._appinfo
-        }
-        ret_val, response = self._make_rest_call_helper(
-            ENDPOINT_QUERY_REPUTATION_V3, action_result, method="post", json=payload
-        )
+        payload = {"urls": [{"raw_url": "cisco.com"}], "app_info": self._appinfo}
+        ret_val, response = self._make_rest_call_helper(ENDPOINT_QUERY_REPUTATION_V3, action_result, method="post", json=payload)
 
         self._appinfo["perf_testing"] = prev_perf_testing_val
 
@@ -262,7 +239,7 @@ class TalosIntelligenceConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        ip = param['ip']
+        ip = param["ip"]
 
         try:
             ip_addr = ipaddress.ip_address(ip)
@@ -271,10 +248,7 @@ class TalosIntelligenceConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, f"Please provide a valid IP Address. Error: {exc}")
         self.debug_print(f"ip request is {ip_request}")
 
-        payload = {
-            "urls": { "endpoint": [ip_request]},
-            "app_info": self._appinfo
-        }
+        payload = {"urls": {"endpoint": [ip_request]}, "app_info": self._appinfo}
 
         ret_val = self._query_reputation(action_result, payload, ip)
         if phantom.is_fail(ret_val):
@@ -297,16 +271,13 @@ class TalosIntelligenceConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        domain = param['domain']
+        domain = param["domain"]
         if not self._is_valid_domain(domain):
             return action_result.set_status(phantom.APP_ERROR, "Please provide a valid url")
 
         url_entry = {"raw_url": domain}
 
-        payload = {
-            "urls": [],
-            "app_info": self._appinfo
-        }
+        payload = {"urls": [], "app_info": self._appinfo}
         payload["urls"].append(url_entry)
 
         ret_val = self._query_reputation(action_result, payload, domain)
@@ -326,16 +297,13 @@ class TalosIntelligenceConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        url = param['url']
+        url = param["url"]
         if not self._is_valid_url(url):
             return action_result.set_status(phantom.APP_ERROR, "Please provide a valid url")
 
         url_entry = {"raw_url": url}
 
-        payload = {
-            "urls": [],
-            "app_info": self._appinfo
-        }
+        payload = {"urls": [], "app_info": self._appinfo}
         payload["urls"].append(url_entry)
 
         ret_val = self._query_reputation(action_result, payload, url)
@@ -355,9 +323,7 @@ class TalosIntelligenceConnector(BaseConnector):
             return action_result.get_status()
 
         # make rest call
-        ret_val, response = self._make_rest_call_helper(
-            ENDPOINT_QUERY_REPUTATION_V3, action_result, method="post", json=payload
-        )
+        ret_val, response = self._make_rest_call_helper(ENDPOINT_QUERY_REPUTATION_V3, action_result, method="post", json=payload)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
@@ -386,12 +352,8 @@ class TalosIntelligenceConnector(BaseConnector):
                         continue
 
                     category = taxonomy["taxonomies"][tax_id]["name"]["en-us"]["text"]
-                    name = taxonomy["taxonomies"][tax_id]["entries"][entry_id]["name"][
-                        "en-us"
-                    ]["text"]
-                    description = taxonomy["taxonomies"][tax_id]["entries"][entry_id][
-                        "description"
-                    ]["en-us"]["text"]
+                    name = taxonomy["taxonomies"][tax_id]["entries"][entry_id]["name"]["en-us"]["text"]
+                    description = taxonomy["taxonomies"][tax_id]["entries"][entry_id]["description"]["en-us"]["text"]
 
                     if category == "Threat Levels":
                         threat_level = name
@@ -412,16 +374,12 @@ class TalosIntelligenceConnector(BaseConnector):
 
     def _fetch_taxonomy(self, action_result, allow_cache=True):
 
-        payload = {
-            "app_info": self._appinfo
-        }
+        payload = {"app_info": self._appinfo}
 
         if "taxonomy" in self._state and allow_cache:
             return 1, self._state["taxonomy"]
 
-        ret_val, response = self._make_rest_call_helper(
-            ENDPOINT_QUERY_TAXONOMIES, action_result, method="post", json=payload
-        )
+        ret_val, response = self._make_rest_call_helper(ENDPOINT_QUERY_TAXONOMIES, action_result, method="post", json=payload)
         self.debug_print("fetching taxonomy")
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -439,16 +397,16 @@ class TalosIntelligenceConnector(BaseConnector):
 
         self.debug_print("action_id", self.get_action_identifier())
 
-        if action_id == 'ip_reputation':
+        if action_id == "ip_reputation":
             ret_val = self._handle_ip_reputation(param)
 
-        if action_id == 'domain_reputation':
+        if action_id == "domain_reputation":
             ret_val = self._handle_domain_reputation(param)
 
-        if action_id == 'url_reputation':
+        if action_id == "url_reputation":
             ret_val = self._handle_url_reputation(param)
 
-        if action_id == 'test_connectivity':
+        if action_id == "test_connectivity":
             ret_val = self._handle_test_connectivity(param)
 
         return ret_val
@@ -461,9 +419,7 @@ class TalosIntelligenceConnector(BaseConnector):
 
     def fetch_crls(self, cert):
         try:
-            crl_distribution_points = cert.extensions.get_extension_for_oid(
-                x509.ExtensionOID.CRL_DISTRIBUTION_POINTS
-            ).value
+            crl_distribution_points = cert.extensions.get_extension_for_oid(x509.ExtensionOID.CRL_DISTRIBUTION_POINTS).value
 
             crl_urls = []
 
@@ -490,11 +446,11 @@ class TalosIntelligenceConnector(BaseConnector):
         def insert_newlines(string, every=64):
             lines = []
             for i in range(0, len(string), every):
-                lines.append(string[i:i + every])
+                lines.append(string[i : i + every])
 
-            return '\n'.join(lines)
+            return "\n".join(lines)
 
-        self._base_url = config['base_url']
+        self._base_url = config["base_url"]
         self._cert = insert_newlines(config["certificate"])
         self._key = insert_newlines(config["key"])
 
@@ -530,7 +486,7 @@ class TalosIntelligenceConnector(BaseConnector):
 
         # exceptions shouldn't really be thrown here because most network related disconnections will happen when a request is sent
         try:
-            self.client = httpx.Client(http2=True, verify=config.get('verify_server_cert', False), cert=temp_file_path)
+            self.client = httpx.Client(http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path)
         except Exception as e:
             self.debug_print(f"Could not connect to server because of {e}")
             if os.path.exists(temp_file_path):
@@ -551,9 +507,9 @@ def main():
 
     argparser = argparse.ArgumentParser()
 
-    argparser.add_argument('input_test_json', help='Input Test JSON file')
-    argparser.add_argument('-u', '--username', help='username', required=False)
-    argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument("input_test_json", help="Input Test JSON file")
+    argparser.add_argument("-u", "--username", help="username", required=False)
+    argparser.add_argument("-p", "--password", help="password", required=False)
 
     args = argparser.parse_args()
     session_id = None
@@ -565,28 +521,29 @@ def main():
 
         # User specified a username but not a password, so ask
         import getpass
+
         password = getpass.getpass("Password: ")
 
     if username and password:
         try:
-            login_url = TalosIntelligenceConnector._get_phantom_base_url() + '/login'
+            login_url = TalosIntelligenceConnector._get_phantom_base_url() + "/login"
 
             print("Accessing the Login page")
             r = requests.get(login_url, verify=False)
-            csrftoken = r.cookies['csrftoken']
+            csrftoken = r.cookies["csrftoken"]
 
             data = dict()
-            data['username'] = username
-            data['password'] = password
-            data['csrfmiddlewaretoken'] = csrftoken
+            data["username"] = username
+            data["password"] = password
+            data["csrfmiddlewaretoken"] = csrftoken
 
             headers = dict()
-            headers['Cookie'] = 'csrftoken=' + csrftoken
-            headers['Referer'] = login_url
+            headers["Cookie"] = "csrftoken=" + csrftoken
+            headers["Referer"] = login_url
 
             print("Logging into Platform to get the session id")
             r2 = requests.post(login_url, verify=False, data=data, headers=headers)
-            session_id = r2.cookies['sessionid']
+            session_id = r2.cookies["sessionid"]
         except Exception as e:
             print("Unable to get session id from the platform. Error: " + str(e))
             exit(1)
@@ -600,8 +557,8 @@ def main():
         connector.print_progress_message = True
 
         if session_id is not None:
-            in_json['user_session_token'] = session_id
-            connector._set_csrf_info(csrftoken, headers['Referer'])
+            in_json["user_session_token"] = session_id
+            connector._set_csrf_info(csrftoken, headers["Referer"])
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
@@ -609,5 +566,5 @@ def main():
     exit(0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
