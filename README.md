@@ -6,7 +6,7 @@ Connector Version: 1.0.1
 Product Vendor: Cisco  
 Product Name: Talos Cloud Intelligence  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 6.2.1.305  
+Minimum Product Version: 6.2.2  
 
 This app provides investigative actions for Cisco Talos Cloud Intelligence
 
@@ -40,8 +40,8 @@ The below configuration variables are required for this Connector to operate.  T
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 **base_url** |  required  | string | Base URL provided by Talos
-**certificate** |  optional  | password | Certificate contents to authenticate with Talos
-**key** |  optional  | password | Private key to authenticate with Talos
+**certificate** |  required  | password | Certificate contents to authenticate with Talos
+**key** |  required  | password | Private key to authenticate with Talos
 **verify_server_cert** |  optional  | boolean | Verify server certificate
 
 ### Supported Actions  
@@ -80,7 +80,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.parameter.ip | string |  `ip`  |  
+action_result.parameter.ip | string |  `ip`  `ipv6`  |  
 action_result.status | string |  |  
 action_result.message | string |  |  
 summary.total_objects | numeric |  |  
