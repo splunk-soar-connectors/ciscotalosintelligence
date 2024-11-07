@@ -29,11 +29,11 @@
             },
             {
                 "module": "cffi",
-                "input_file": "wheels/py39/cffi-1.17.1-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py39/cffi-1.16.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl"
             },
             {
                 "module": "cryptography",
-                "input_file": "wheels/py39/cryptography-43.0.1-cp39-abi3-manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py39/cryptography-42.0.5-cp39-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl"
             },
             {
                 "module": "exceptiongroup",
