@@ -25,13 +25,13 @@ import textwrap
 import time
 from datetime import datetime
 from urllib.parse import urlparse
-from bs4 import BeautifulSoup
 
 import httpx
 
 # Phantom App imports
 import phantom.app as phantom
 import requests
+from bs4 import BeautifulSoup
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from phantom.action_result import ActionResult
