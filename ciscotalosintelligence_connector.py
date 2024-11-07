@@ -25,6 +25,7 @@ import textwrap
 import time
 from datetime import datetime
 from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
 import httpx
 
@@ -161,7 +162,7 @@ class TalosIntelligenceConnector(BaseConnector):
                 request_func = getattr(self.client, method)
 
                 r = request_func(url, **kwargs)
-                self.debug_print(f"got this return value {r}")
+                break
             except Exception as e:
                 self.debug_print(f"Retrying to establish connection to the server for the {i + 1} time")
                 self.debug_print(e)
@@ -189,14 +190,11 @@ class TalosIntelligenceConnector(BaseConnector):
 
     def _make_rest_call_helper(self, *args, **kwargs):
         request_delay = 0.25
-        start_time = time.time()
-        remaining_time = MAX_REQUEST_TIMEOUT
+        max_processing_time = time.time() + MAX_REQUEST_TIMEOUT
         for i in range(MAX_REQUEST_RETRIES + 1):
-            elapsed_time = time.time() - start_time
-            remaining_time -= elapsed_time
-            if remaining_time <= 0:
+            if time.time() > max_processing_time:
                 action_result = args[1]
-                return action_result.set_status(phantom.APP_ERROR, "Max request timeout of 5s exceeded"), None
+                return action_result.set_status(phantom.APP_ERROR, f"Max request timeout of {MAX_REQUEST_TIMEOUT}s exceeded"), None
 
             ret_val, response = self._make_rest_call(i, *args, **kwargs)
             if phantom.is_fail(ret_val) and response:
@@ -232,8 +230,10 @@ class TalosIntelligenceConnector(BaseConnector):
     def format_ip_type(self, ip_addr):
         if isinstance(ip_addr, ipaddress.IPv4Address):
             return {"ipv4_addr": int(ip_addr)}
-        else:
+        elif isinstance(ip_addr, ipaddress.IPv6Address):
             return {"ipv6_addr": ip_addr.packed.hex()}
+        else:
+            raise Exception(f"{ip_addr} is not valid")
 
     def _handle_ip_reputation(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))

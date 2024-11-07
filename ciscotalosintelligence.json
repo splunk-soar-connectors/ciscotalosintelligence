@@ -28,6 +28,10 @@
                 "input_file": "wheels/py3/anyio-4.6.2.post1-py3-none-any.whl"
             },
             {
+                "module": "beautifulsoup4",
+                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
+            },
+            {
                 "module": "cffi",
                 "input_file": "wheels/py39/cffi-1.16.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl"
             },
