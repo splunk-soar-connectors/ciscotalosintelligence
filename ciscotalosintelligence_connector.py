@@ -263,9 +263,7 @@ class TalosIntelligenceConnector(BaseConnector):
 
     def _is_valid_domain(self, domain):
         regex = r"^(?!-)([A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,}$"
-        if re.match(regex, domain):
-            return True
-        return False
+        return bool(re.match(regex, domain))
 
     def _handle_domain_reputation(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
