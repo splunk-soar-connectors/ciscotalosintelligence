@@ -246,7 +246,6 @@ class TalosIntelligenceConnector(BaseConnector):
             ip_request = self.format_ip_type(ip_addr)
         except Exception as exc:
             return action_result.set_status(phantom.APP_ERROR, f"Please provide a valid IP Address. Error: {exc}")
-        self.debug_print(f"ip request is {ip_request}")
 
         payload = {"urls": {"endpoint": [ip_request]}, "app_info": self._appinfo}
 
@@ -255,7 +254,6 @@ class TalosIntelligenceConnector(BaseConnector):
             return action_result.get_status()
 
         summary = action_result.update_summary({})
-        summary["Message"] = "IP WORKED"
         threat_level = action_result.get_data()[0]["Threat_Level"]
         summary["Message"] = f"{ip} has a {threat_level} threat level"
 
