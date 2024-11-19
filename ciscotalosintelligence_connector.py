@@ -176,7 +176,9 @@ class TalosIntelligenceConnector(BaseConnector):
                     temp_file.write(cert)
                     temp_file.seek(0)  # Move the file pointer to the beginning for reading
                     temp_file_path = temp_file.name  # Get the name of the temporary file
-                self.client = httpx.Client(http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path, timeout=MAX_REQUEST_TIMEOUT)
+                self.client = httpx.Client(
+                    http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path, timeout=MAX_REQUEST_TIMEOUT
+                )
 
                 if os.path.exists(temp_file_path):
                     os.remove(temp_file_path)
@@ -480,7 +482,9 @@ class TalosIntelligenceConnector(BaseConnector):
 
         # exceptions shouldn't really be thrown here because most network related disconnections will happen when a request is sent
         try:
-            self.client = httpx.Client(http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path, timeout=MAX_REQUEST_TIMEOUT)
+            self.client = httpx.Client(
+                http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path, timeout=MAX_REQUEST_TIMEOUT
+            )
         except Exception as e:
             self.debug_print(f"Could not connect to server because of {e}")
             if os.path.exists(temp_file_path):
