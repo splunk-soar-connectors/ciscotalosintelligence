@@ -6,7 +6,7 @@ Connector Version: 1.0.1
 Product Vendor: Cisco  
 Product Name: Talos Cloud Intelligence  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 6.2.1.305  
+Minimum Product Version: 6.2.2  
 
 This app provides investigative actions for Cisco Talos Cloud Intelligence
 
@@ -40,8 +40,8 @@ The below configuration variables are required for this Connector to operate.  T
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 **base_url** |  required  | string | Base URL provided by Talos
-**certificate** |  optional  | password | Certificate contents to authenticate with Talos
-**key** |  optional  | password | Private key to authenticate with Talos
+**certificate** |  required  | password | Certificate contents to authenticate with Talos
+**key** |  required  | password | Private key to authenticate with Talos
 **verify_server_cert** |  optional  | boolean | Verify server certificate
 
 ### Supported Actions  
@@ -75,19 +75,21 @@ Provide information on an IP address's reputation, enabling you to take proper a
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**ip** |  required  | IP to query | string |  `ip` 
+**ip** |  required  | IP to query | string |  `ip`  `ipv6` 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.parameter.ip | string |  `ip`  |  
+action_result.parameter.ip | string |  `ip`  `ipv6`  |  
 action_result.status | string |  |  
 action_result.message | string |  |  
 summary.total_objects | numeric |  |  
 summary.total_objects_successful | numeric |  |  
-action_result.data.0.Threat Level | string |  |  
-action_result.data.1.Threat Categories | string |  |  
-action_result.data.2.Acceptable Use Policy Categories | string |  |    
+action_result.data.\*.Observable | string |  |  
+action_result.data.\*.Threat_Level | string |  |  
+action_result.data.\*.Threat_Categories | string |  |  
+action_result.data.\*.AUP | string |  |  
+action_result.summary.message | string |  |   72.163.4.185 has a Favorable threat level   
 
 ## action: 'domain reputation'
 Query domain info
@@ -110,9 +112,11 @@ action_result.status | string |  |
 action_result.message | string |  |  
 summary.total_objects | numeric |  |  
 summary.total_objects_successful | numeric |  |  
-action_result.data.0.Threat Level | string |  |  
-action_result.data.1.Threat Categories | string |  |  
-action_result.data.2.Acceptable Use Policy Categories | string |  |    
+action_result.data.\*.Observable | string |  |  
+action_result.data.\*.Threat_Level | string |  |  
+action_result.data.\*.Threat_Categories | string |  |  
+action_result.data.\*.AUP | string |  |  
+action_result.summary.message | string |  |   splunk.com has a Favorable threat level   
 
 ## action: 'url reputation'
 Query URL info
@@ -135,6 +139,8 @@ action_result.status | string |  |
 action_result.message | string |  |  
 summary.total_objects | numeric |  |  
 summary.total_objects_successful | numeric |  |  
-action_result.data.0.Threat Level | string |  |  
-action_result.data.1.Threat Categories | string |  |  
-action_result.data.2.Acceptable Use Policy Categories | string |  |  
+action_result.data.\*.Observable | string |  |  
+action_result.data.\*.Threat_Level | string |  |  
+action_result.data.\*.Threat_Categories | string |  |  
+action_result.data.\*.AUP | string |  |  
+action_result.summary.message | string |  |   https://splunk.com has a Favorable threat level 
