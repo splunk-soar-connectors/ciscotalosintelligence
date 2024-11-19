@@ -176,7 +176,7 @@ class TalosIntelligenceConnector(BaseConnector):
                     temp_file.write(cert)
                     temp_file.seek(0)  # Move the file pointer to the beginning for reading
                     temp_file_path = temp_file.name  # Get the name of the temporary file
-                self.client = httpx.Client(http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path)
+                self.client = httpx.Client(http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path, timeout=MAX_REQUEST_TIMEOUT)
 
                 if os.path.exists(temp_file_path):
                     os.remove(temp_file_path)
@@ -269,7 +269,7 @@ class TalosIntelligenceConnector(BaseConnector):
 
         domain = param["domain"]
         if not self._is_valid_domain(domain):
-            return action_result.set_status(phantom.APP_ERROR, "Please provide a valid url")
+            return action_result.set_status(phantom.APP_ERROR, "Please provide a valid domain")
 
         url_entry = {"raw_url": domain}
 
@@ -317,14 +317,12 @@ class TalosIntelligenceConnector(BaseConnector):
 
         if phantom.is_fail(taxonomy_ret_val):
             return action_result.get_status()
-
         # make rest call
         ret_val, response = self._make_rest_call_helper(ENDPOINT_QUERY_REPUTATION_V3, action_result, method="post", json=payload)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
         response_taxonomy_map_version = response["taxonomy_map_version"]
-
         if response_taxonomy_map_version > self._state["taxonomy_version"]:
             taxonomy_ret_val, taxonomy = self._fetch_taxonomy(action_result, allow_cache=False)
 
@@ -482,7 +480,7 @@ class TalosIntelligenceConnector(BaseConnector):
 
         # exceptions shouldn't really be thrown here because most network related disconnections will happen when a request is sent
         try:
-            self.client = httpx.Client(http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path)
+            self.client = httpx.Client(http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path, timeout=MAX_REQUEST_TIMEOUT)
         except Exception as e:
             self.debug_print(f"Could not connect to server because of {e}")
             if os.path.exists(temp_file_path):
