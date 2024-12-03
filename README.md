@@ -8,7 +8,7 @@ Product Name: Talos Cloud Intelligence
 Product Version Supported (regex): ".\*"  
 Minimum Product Version: 6.2.2  
 
-This app provides investigative actions for Cisco Talos Cloud Intelligence
+This app provides investigative actions for Cisco Talos Intelligence
 
 [comment]: # " File: README.md"
 [comment]: # "Copyright (c) 2024 Splunk Inc."
