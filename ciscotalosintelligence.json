@@ -19,7 +19,7 @@
     "package_name": "phantom_ciscotalosintelligence",
     "fips_compliant": false,
     "main_module": "ciscotalosintelligence_connector.py",
-    "min_phantom_version": "6.2.2",
+    "min_phantom_version": "6.3.0",
     "app_wizard_version": "1.0.0",
     "pip39_dependencies": {
         "wheel": [
@@ -89,7 +89,7 @@
         "base_url": {
             "data_type": "string",
             "order": 0,
-            "description": "Base URL provided by Talos",
+            "description": "Base URL provided by Talos.",
             "default": "https://soar-api.talos.cisco.com",
             "required": true,
             "name": "base_url",
@@ -99,7 +99,7 @@
         "certificate": {
             "data_type": "password",
             "order": 1,
-            "description": "Certificate contents to authenticate with Talos",
+            "description": "Certificate contents to authenticate with Talos.",
             "required": true,
             "name": "certificate",
             "id": 1,
@@ -108,14 +108,14 @@
         "key": {
             "data_type": "password",
             "order": 2,
-            "description": "Private key to authenticate with Talos",
+            "description": "Private key to authenticate with Talos.",
             "required": true,
             "name": "key",
             "id": 2,
             "visibility": []
         },
         "verify_server_cert": {
-            "description": "Verify server certificate",
+            "description": "Verify server certificate.",
             "data_type": "boolean",
             "default": false,
             "order": 3,
@@ -126,7 +126,7 @@
         {
             "action": "test connectivity",
             "identifier": "test_connectivity",
-            "description": "Validate the asset configuration for connectivity using supplied configuration",
+            "description": "Validate the asset configuration for connectivity using supplied configuration.",
             "verbose": "Action uses the URS API to get a list of the AUP categories used to classify website content.",
             "type": "test",
             "read_only": true,
