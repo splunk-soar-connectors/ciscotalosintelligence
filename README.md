@@ -6,7 +6,7 @@ Connector Version: 1.0.1
 Product Vendor: Cisco  
 Product Name: Talos Intelligence  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 6.2.2  
+Minimum Product Version: 6.3.0  
 
 This app provides investigative actions for Cisco Talos Intelligence
 
@@ -30,29 +30,26 @@ The Cisco Talos Intelligence license is included with your Splunk SOAR (Cloud) l
 
 ## Overview
 
-This app uses the Cisco Talos API that specializes in identifying, analyzing, and mitigating cybersecurity threats
+This app uses the Cisco Talos API that specializes in identifying, analyzing, and mitigating cybersecurity threats.
 
 For additional details, see the [Cisco Talos Intelligence article](https://docs.splunk.com/Documentation/SOAR/drafts/Playbook/Talos) in the Splunk SOAR documentation.
 
+**Note:** The Cisco Talos Intelligence asset is already configured in your Splunk SOAR (Cloud) deployment. 
 
 ### Configuration Variables
-The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a Talos Intelligence asset in SOAR.
+This table lists the configuration variables required to operate Cisco Talos Intelligence. These variables are specified when configuring a Talos Intelligence asset in Splunk SOAR.
 
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
-**base_url** |  required  | string | Base URL provided by Talos
-**certificate** |  required  | password | Certificate contents to authenticate with Talos
-**key** |  required  | password | Private key to authenticate with Talos
-**verify_server_cert** |  optional  | boolean | Verify server certificate
 
 ### Supported Actions  
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration.  
 [ip reputation](#action-ip-reputation) - Look up Cisco Talos threat intelligence for a given IP address.  
 [domain reputation](#action-domain-reputation) - Look up Cisco Talos threat intelligence for a given domain.  
 [url reputation](#action-url-reputation) - Look up Cisco Talos threat intelligence for a given URL.  
 
 ## action: 'test connectivity'
-Validate the asset configuration for connectivity using supplied configuration
+Validate the asset configuration for connectivity using supplied configuration.
 
 Type: **test**  
 Read only: **True**
