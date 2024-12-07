@@ -236,8 +236,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "domain",
-                        "url"
+                        "domain"
                     ],
                     "value_list": [],
                     "default": "",
@@ -250,8 +249,7 @@
                     "data_path": "action_result.parameter.domain",
                     "data_type": "string",
                     "contains": [
-                        "domain",
-                        "url"
+                        "domain"
                     ]
                 },
                 {

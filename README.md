@@ -43,13 +43,13 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 
 ### Supported Actions  
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration.  
-[ip reputation](#action-ip-reputation) - Look up Cisco Talos threat intelligence for a given IP address.  
-[domain reputation](#action-domain-reputation) - Look up Cisco Talos threat intelligence for a given domain.  
-[url reputation](#action-url-reputation) - Look up Cisco Talos threat intelligence for a given URL.  
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
+[ip reputation](#action-ip-reputation) - Look up Cisco Talos threat intelligence for a given IP address  
+[domain reputation](#action-domain-reputation) - Look up Cisco Talos threat intelligence for a given domain  
+[url reputation](#action-url-reputation) - Look up Cisco Talos threat intelligence for a given URL  
 
 ## action: 'test connectivity'
-Validate the asset configuration for connectivity using supplied configuration.
+Validate the asset configuration for connectivity using supplied configuration
 
 Type: **test**  
 Read only: **True**
@@ -63,7 +63,7 @@ No parameters are required for this action
 No Output  
 
 ## action: 'ip reputation'
-Look up Cisco Talos threat intelligence for a given IP address.
+Look up Cisco Talos threat intelligence for a given IP address
 
 Type: **investigate**  
 Read only: **True**
@@ -90,7 +90,7 @@ action_result.data.\*.AUP | string |  |
 action_result.summary.message | string |  |   72.163.4.185 has a Favorable threat level   
 
 ## action: 'domain reputation'
-Look up Cisco Talos threat intelligence for a given domain.
+Look up Cisco Talos threat intelligence for a given domain
 
 Type: **investigate**  
 Read only: **True**
@@ -117,7 +117,7 @@ action_result.data.\*.AUP | string |  |
 action_result.summary.message | string |  |   splunk.com has a Favorable threat level   
 
 ## action: 'url reputation'
-Look up Cisco Talos threat intelligence for a given URL.
+Look up Cisco Talos threat intelligence for a given URL
 
 Type: **investigate**  
 Read only: **True**
