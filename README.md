@@ -4,11 +4,11 @@
 Publisher: Splunk  
 Connector Version: 1.0.1  
 Product Vendor: Cisco  
-Product Name: Talos Cloud Intelligence  
+Product Name: Talos Intelligence  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 6.2.2  
+Minimum Product Version: 6.3.0  
 
-This app provides investigative actions for Cisco Talos Cloud Intelligence
+This app provides investigative actions for Cisco Talos Intelligence
 
 [comment]: # " File: README.md"
 [comment]: # "Copyright (c) 2024 Splunk Inc."
@@ -24,31 +24,23 @@ This app provides investigative actions for Cisco Talos Cloud Intelligence
 [comment]: # "either express or implied. See the License for the specific language governing permissions"
 [comment]: # "and limitations under the License."
 [comment]: # ""
-## Getting a Talos license 
+## Cisco Talos Intelligence license for Splunk SOAR (Cloud)
 
-A request needs to be made to the Talos team. In the configuration window please insert the certificate contents and
-private key separatley.  
+The Cisco Talos Intelligence license is included with your Splunk SOAR (Cloud) license.
 
-## Talos
+## Overview
 
-This app makes use of Ciscos Talos API that specializes in identifying, analyzing, and mitigating cybersecurity threats
+This app uses the Cisco Talos API that specializes in identifying, analyzing, and mitigating cybersecurity threats.
 
+For additional details, see the [Cisco Talos Intelligence article](https://docs.splunk.com/Documentation/SOAR/current/Playbook/Talos) in the Splunk SOAR documentation.
 
-### Configuration Variables
-The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a Talos Cloud Intelligence asset in SOAR.
-
-VARIABLE | REQUIRED | TYPE | DESCRIPTION
--------- | -------- | ---- | -----------
-**base_url** |  required  | string | Base URL provided by Talos
-**certificate** |  required  | password | Certificate contents to authenticate with Talos
-**key** |  required  | password | Private key to authenticate with Talos
-**verify_server_cert** |  optional  | boolean | Verify server certificate
+**Note:** The Cisco Talos Intelligence asset is already configured in your Splunk SOAR (Cloud) deployment. 
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
-[ip reputation](#action-ip-reputation) - Query IP info  
-[domain reputation](#action-domain-reputation) - Query domain info  
-[url reputation](#action-url-reputation) - Query URL info  
+[ip reputation](#action-ip-reputation) - Look up Cisco Talos threat intelligence for a given IP address  
+[domain reputation](#action-domain-reputation) - Look up Cisco Talos threat intelligence for a given domain  
+[url reputation](#action-url-reputation) - Look up Cisco Talos threat intelligence for a given URL  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -65,12 +57,12 @@ No parameters are required for this action
 No Output  
 
 ## action: 'ip reputation'
-Query IP info
+Look up Cisco Talos threat intelligence for a given IP address
 
 Type: **investigate**  
 Read only: **True**
 
-Provide information on an IP address's reputation, enabling you to take proper action against untrusted, and unwanted resources.
+Provides information on an IP address's reputation, so you can take appropriate action against untrusted or unwanted resources.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -92,22 +84,22 @@ action_result.data.\*.AUP | string |  |
 action_result.summary.message | string |  |   72.163.4.185 has a Favorable threat level   
 
 ## action: 'domain reputation'
-Query domain info
+Look up Cisco Talos threat intelligence for a given domain
 
 Type: **investigate**  
 Read only: **True**
 
-Provide information on a domain's reputation, enabling you to take proper action against untrusted, and unwanted resources.
+Provides information on a domain's reputation, so you can take appropriate action against untrusted or unwanted resources.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**domain** |  required  | Domain to query | string |  `domain`  `url` 
+**domain** |  required  | Domain to query | string |  `domain` 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.parameter.domain | string |  `domain`  `url`  |  
+action_result.parameter.domain | string |  `domain`  |  
 action_result.status | string |  |  
 action_result.message | string |  |  
 summary.total_objects | numeric |  |  
@@ -119,12 +111,12 @@ action_result.data.\*.AUP | string |  |
 action_result.summary.message | string |  |   splunk.com has a Favorable threat level   
 
 ## action: 'url reputation'
-Query URL info
+Look up Cisco Talos threat intelligence for a given URL
 
 Type: **investigate**  
 Read only: **True**
 
-Provide information on an URL's reputation, enabling you to take proper action against untrusted, and unwanted resources.
+Provides information on a URL's reputation, so you can take appropriate action against untrusted or unwanted resources.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS

@@ -1,12 +1,12 @@
 {
     "appid": "7c653487-22c8-4ec1-bca0-16a8b1513c86",
     "name": "Cisco Talos Intelligence",
-    "description": "This app provides investigative actions for Cisco Talos Cloud Intelligence",
+    "description": "This app provides investigative actions for Cisco Talos Intelligence",
     "type": "information",
     "product_vendor": "Cisco",
     "logo": "ciscotalosintelligence.svg",
     "logo_dark": "ciscotalosintelligence_dark.svg",
-    "product_name": "Talos Cloud Intelligence",
+    "product_name": "Talos Intelligence",
     "python_version": "3",
     "latest_tested_versions": [
         "Cloud, October 30, 2024"
@@ -19,7 +19,7 @@
     "package_name": "phantom_ciscotalosintelligence",
     "fips_compliant": false,
     "main_module": "ciscotalosintelligence_connector.py",
-    "min_phantom_version": "6.2.2",
+    "min_phantom_version": "6.3.0",
     "app_wizard_version": "1.0.0",
     "pip39_dependencies": {
         "wheel": [
@@ -89,33 +89,37 @@
         "base_url": {
             "data_type": "string",
             "order": 0,
-            "description": "Base URL provided by Talos",
+            "description": "Base URL provided by Talos.",
             "default": "https://soar-api.talos.cisco.com",
             "required": true,
             "name": "base_url",
-            "id": 0
+            "id": 0,
+            "visibility": []
         },
         "certificate": {
             "data_type": "password",
             "order": 1,
-            "description": "Certificate contents to authenticate with Talos",
+            "description": "Certificate contents to authenticate with Talos.",
             "required": true,
             "name": "certificate",
-            "id": 1
+            "id": 1,
+            "visibility": []
         },
         "key": {
             "data_type": "password",
             "order": 2,
-            "description": "Private key to authenticate with Talos",
+            "description": "Private key to authenticate with Talos.",
             "required": true,
             "name": "key",
-            "id": 2
+            "id": 2,
+            "visibility": []
         },
         "verify_server_cert": {
-            "description": "Verify server certificate",
+            "description": "Verify server certificate.",
             "data_type": "boolean",
             "default": false,
-            "order": 3
+            "order": 3,
+            "visibility": []
         }
     },
     "actions": [
@@ -133,8 +137,8 @@
         {
             "action": "ip reputation",
             "identifier": "ip_reputation",
-            "description": "Query IP info",
-            "verbose": "Provide information on an IP address's reputation, enabling you to take proper action against untrusted, and unwanted resources.",
+            "description": "Look up Cisco Talos threat intelligence for a given IP address",
+            "verbose": "Provides information on an IP address's reputation, so you can take appropriate action against untrusted or unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -221,8 +225,8 @@
         {
             "action": "domain reputation",
             "identifier": "domain_reputation",
-            "description": "Query domain info",
-            "verbose": "Provide information on a domain's reputation, enabling you to take proper action against untrusted, and unwanted resources.",
+            "description": "Look up Cisco Talos threat intelligence for a given domain",
+            "verbose": "Provides information on a domain's reputation, so you can take appropriate action against untrusted or unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -232,8 +236,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "domain",
-                        "url"
+                        "domain"
                     ],
                     "value_list": [],
                     "default": "",
@@ -246,8 +249,7 @@
                     "data_path": "action_result.parameter.domain",
                     "data_type": "string",
                     "contains": [
-                        "domain",
-                        "url"
+                        "domain"
                     ]
                 },
                 {
@@ -309,8 +311,8 @@
         {
             "action": "url reputation",
             "identifier": "url_reputation",
-            "description": "Query URL info",
-            "verbose": "Provide information on an URL's reputation, enabling you to take proper action against untrusted, and unwanted resources.",
+            "description": "Look up Cisco Talos threat intelligence for a given URL",
+            "verbose": "Provides information on a URL's reputation, so you can take appropriate action against untrusted or unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {

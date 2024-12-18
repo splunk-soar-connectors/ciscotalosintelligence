@@ -12,11 +12,14 @@
 [comment]: # "either express or implied. See the License for the specific language governing permissions"
 [comment]: # "and limitations under the License."
 [comment]: # ""
-## Getting a Talos license 
+## Cisco Talos Intelligence license for Splunk SOAR (Cloud)
 
-A request needs to be made to the Talos team. In the configuration window please insert the certificate contents and
-private key separatley.  
+The Cisco Talos Intelligence license is included with your Splunk SOAR (Cloud) license.
 
-## Talos
+## Overview
 
-This app makes use of Ciscos Talos API that specializes in identifying, analyzing, and mitigating cybersecurity threats
+This app uses the Cisco Talos API that specializes in identifying, analyzing, and mitigating cybersecurity threats.
+
+For additional details, see the [Cisco Talos Intelligence article](https://docs.splunk.com/Documentation/SOAR/current/Playbook/Talos) in the Splunk SOAR documentation.
+
+**Note:** The Cisco Talos Intelligence asset is already configured in your Splunk SOAR (Cloud) deployment. 

@@ -165,7 +165,6 @@ class TalosIntelligenceConnector(BaseConnector):
                 break
             except Exception as e:
                 self.debug_print(f"Retrying to establish connection to the server for the {i + 1} time")
-                self.debug_print(e)
                 jittered_delay = random.uniform(delay * 0.9, delay * 1.1)
                 time.sleep(jittered_delay)
                 delay = min(delay * 2, 256)
