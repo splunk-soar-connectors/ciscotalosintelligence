@@ -32,15 +32,9 @@ The Cisco Talos Intelligence license is included with your Splunk SOAR (Cloud) l
 
 This app uses the Cisco Talos API that specializes in identifying, analyzing, and mitigating cybersecurity threats.
 
-For additional details, see the [Cisco Talos Intelligence article](https://docs.splunk.com/Documentation/SOAR/drafts/Playbook/Talos) in the Splunk SOAR documentation.
+For additional details, see the [Cisco Talos Intelligence article](https://docs.splunk.com/Documentation/SOAR/current/Playbook/Talos) in the Splunk SOAR documentation.
 
 **Note:** The Cisco Talos Intelligence asset is already configured in your Splunk SOAR (Cloud) deployment. 
-
-### Configuration Variables
-This table lists the configuration variables required to operate Cisco Talos Intelligence. These variables are specified when configuring a Talos Intelligence asset in Splunk SOAR.
-
-VARIABLE | REQUIRED | TYPE | DESCRIPTION
--------- | -------- | ---- | -----------
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
@@ -100,12 +94,12 @@ Provides information on a domain's reputation, so you can take appropriate actio
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**domain** |  required  | Domain to query | string |  `domain`  `url` 
+**domain** |  required  | Domain to query | string |  `domain` 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.parameter.domain | string |  `domain`  `url`  |  
+action_result.parameter.domain | string |  `domain`  |  
 action_result.status | string |  |  
 action_result.message | string |  |  
 summary.total_objects | numeric |  |  
