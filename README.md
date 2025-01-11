@@ -2,16 +2,16 @@
 # Cisco Talos Intelligence
 
 Publisher: Splunk  
-Connector Version: 1.0.1  
+Connector Version: 1.0.2  
 Product Vendor: Cisco  
 Product Name: Talos Intelligence  
 Product Version Supported (regex): ".\*"  
 Minimum Product Version: 6.3.0  
 
-This app provides investigative actions for Cisco Talos Intelligence
+This app provides investigative actions for Cisco Talos Intelligence. It is only supported on Splunk SOAR Cloud
 
 [comment]: # " File: README.md"
-[comment]: # "Copyright (c) 2024 Splunk Inc."
+[comment]: # "Copyright (c) 2025 Splunk Inc."
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "you may not use this file except in compliance with the License."
