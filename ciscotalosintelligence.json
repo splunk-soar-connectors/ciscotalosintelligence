@@ -1,7 +1,7 @@
 {
     "appid": "7c653487-22c8-4ec1-bca0-16a8b1513c86",
     "name": "Cisco Talos Intelligence",
-    "description": "This app provides investigative actions for Cisco Talos Intelligence",
+    "description": "This app provides investigative actions for Cisco Talos Intelligence. It is only supported on Splunk SOAR Cloud",
     "type": "information",
     "product_vendor": "Cisco",
     "logo": "ciscotalosintelligence.svg",
@@ -13,7 +13,7 @@
     ],
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2024 Splunk Inc.",
+    "license": "Copyright (c) 2025 Splunk Inc.",
     "app_version": "1.0.1",
     "utctime_updated": "2024-06-21T18:40:03.685771Z",
     "package_name": "phantom_ciscotalosintelligence",

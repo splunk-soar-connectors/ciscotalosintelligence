@@ -1,6 +1,6 @@
 # File: ciscotalosintelligence_connector.py
 #
-# Copyright (c) 2024 Splunk Inc.
+# Copyright (c) 2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -47,7 +47,6 @@ class RetVal(tuple):
 
 
 class TalosIntelligenceConnector(BaseConnector):
-
     def __init__(self):
         super(TalosIntelligenceConnector, self).__init__()
 
@@ -64,7 +63,10 @@ class TalosIntelligenceConnector(BaseConnector):
         if response.status_code == 200:
             return RetVal(phantom.APP_SUCCESS, {})
 
-        return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
+        return RetVal(
+            action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"),
+            None,
+        )
 
     def _process_html_response(self, response, action_result):
         # An html response, treat it like an error
@@ -89,7 +91,13 @@ class TalosIntelligenceConnector(BaseConnector):
         try:
             resp_json = r.json()
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(str(e))), None)
+            return RetVal(
+                action_result.set_status(
+                    phantom.APP_ERROR,
+                    "Unable to parse JSON response. Error: {0}".format(str(e)),
+                ),
+                None,
+            )
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
@@ -114,13 +122,20 @@ class TalosIntelligenceConnector(BaseConnector):
                 err_msg = r.headers.get("grpc-message", "Error")
                 return (
                     action_result.set_status(
-                        phantom.APP_ERROR, f"Got retryable grpc-status of {r.headers['grpc-status']} with message {err_msg}"
+                        phantom.APP_ERROR,
+                        f"Got retryable grpc-status of {r.headers['grpc-status']} with message {err_msg}",
                     ),
                     r,
                 )
 
             if r.status_code == 503:
-                return action_result.set_status(phantom.APP_ERROR, "Got retryable http status code {0}".format(r.status_code)), r
+                return (
+                    action_result.set_status(
+                        phantom.APP_ERROR,
+                        "Got retryable http status code {0}".format(r.status_code),
+                    ),
+                    r,
+                )
 
         # Process each 'Content-Type' of response separately
 
@@ -171,12 +186,20 @@ class TalosIntelligenceConnector(BaseConnector):
 
                 with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix="test") as temp_file:
                     cert_string = f"-----BEGIN CERTIFICATE-----\n{self._cert}\n-----END CERTIFICATE-----"
-                    cert = f"{cert_string}\n-----BEGIN RSA PRIVATE KEY-----\n{self._key}\n-----END RSA PRIVATE KEY-----\n"
+                    cert = (
+                        f"{cert_string}\n"
+                        "-----BEGIN RSA PRIVATE KEY-----\n"  # pragma: allowlist secret
+                        f"{self._key}\n"
+                        "-----END RSA PRIVATE KEY-----\n"  # pragma: allowlist secret
+                    )
                     temp_file.write(cert)
                     temp_file.seek(0)  # Move the file pointer to the beginning for reading
                     temp_file_path = temp_file.name  # Get the name of the temporary file
                 self.client = httpx.Client(
-                    http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path, timeout=MAX_REQUEST_TIMEOUT
+                    http2=True,
+                    verify=config.get("verify_server_cert", False),
+                    cert=temp_file_path,
+                    timeout=MAX_REQUEST_TIMEOUT,
                 )
 
                 if os.path.exists(temp_file_path):
@@ -184,7 +207,11 @@ class TalosIntelligenceConnector(BaseConnector):
 
                 if i == MAX_CONNECTION_RETIRIES - 1:
                     return RetVal(
-                        action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(str(e))), resp_json
+                        action_result.set_status(
+                            phantom.APP_ERROR,
+                            "Error Connecting to server. Details: {0}".format(str(e)),
+                        ),
+                        resp_json,
                     )
 
         return self._process_response(r, action_result, retry)
@@ -195,7 +222,13 @@ class TalosIntelligenceConnector(BaseConnector):
         for i in range(MAX_REQUEST_RETRIES + 1):
             if time.time() > max_processing_time:
                 action_result = args[1]
-                return action_result.set_status(phantom.APP_ERROR, f"Max request timeout of {MAX_REQUEST_TIMEOUT}s exceeded"), None
+                return (
+                    action_result.set_status(
+                        phantom.APP_ERROR,
+                        f"Max request timeout of {MAX_REQUEST_TIMEOUT}s exceeded",
+                    ),
+                    None,
+                )
 
             ret_val, response = self._make_rest_call(i, *args, **kwargs)
             if phantom.is_fail(ret_val) and response:
@@ -313,7 +346,6 @@ class TalosIntelligenceConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _query_reputation(self, action_result, payload, observable=None):
-
         taxonomy_ret_val, taxonomy = self._fetch_taxonomy(action_result)
 
         if phantom.is_fail(taxonomy_ret_val):
@@ -368,7 +400,6 @@ class TalosIntelligenceConnector(BaseConnector):
             return phantom.APP_SUCCESS
 
     def _fetch_taxonomy(self, action_result, allow_cache=True):
-
         payload = {"app_info": self._appinfo}
 
         if "taxonomy" in self._state and allow_cache:
@@ -473,7 +504,12 @@ class TalosIntelligenceConnector(BaseConnector):
             self._appinfo["perf_testing"] = True
 
         with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix="test") as temp_file:
-            cert = f"{cert_string}\n-----BEGIN RSA PRIVATE KEY-----\n{textwrap.fill(self._key, 64)}\n-----END RSA PRIVATE KEY-----\n"
+            cert = (
+                f"{cert_string}\n"
+                "-----BEGIN RSA PRIVATE KEY-----\n"  # pragma: allowlist secret
+                f"{textwrap.fill(self._key, 64)}\n"
+                "-----END RSA PRIVATE KEY-----\n"  # pragma: allowlist secret
+            )
 
             temp_file.write(cert)
             temp_file.seek(0)  # Move the file pointer to the beginning for reading
@@ -482,7 +518,10 @@ class TalosIntelligenceConnector(BaseConnector):
         # exceptions shouldn't really be thrown here because most network related disconnections will happen when a request is sent
         try:
             self.client = httpx.Client(
-                http2=True, verify=config.get("verify_server_cert", False), cert=temp_file_path, timeout=MAX_REQUEST_TIMEOUT
+                http2=True,
+                verify=config.get("verify_server_cert", False),
+                cert=temp_file_path,
+                timeout=MAX_REQUEST_TIMEOUT,
             )
         except Exception as e:
             self.debug_print(f"Could not connect to server because of {e}")
@@ -515,7 +554,6 @@ def main():
     password = args.password
 
     if username is not None and password is None:
-
         # User specified a username but not a password, so ask
         import getpass
 
