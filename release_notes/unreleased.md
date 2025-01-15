@@ -1,2 +1,1 @@
 **Unreleased**
-* Updates to the README file [PAPP-35152]
