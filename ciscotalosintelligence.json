@@ -127,7 +127,7 @@
             "action": "test connectivity",
             "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
-            "verbose": "Action uses the URS API to get a list of the AUP categories used to classify website content.",
+            "verbose": "Action uses the Cisco Talos API to get a list of the Acceptable Use Policy Categories categories used to classify website content.",
             "type": "test",
             "read_only": true,
             "parameters": {},
@@ -138,7 +138,7 @@
             "action": "ip reputation",
             "identifier": "ip_reputation",
             "description": "Look up Cisco Talos threat intelligence for a given IP address",
-            "verbose": "Provides information on an IP address's reputation, so you can take appropriate action against untrusted or unwanted resources.",
+            "verbose": "Provides intelligence about an IP, so you can take appropriate actions against untrusted or unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -226,7 +226,7 @@
             "action": "domain reputation",
             "identifier": "domain_reputation",
             "description": "Look up Cisco Talos threat intelligence for a given domain",
-            "verbose": "Provides information on a domain's reputation, so you can take appropriate action against untrusted or unwanted resources.",
+            "verbose": "Provides intelligence about a domain, so you can take appropriate actions against untrusted or unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -312,7 +312,7 @@
             "action": "url reputation",
             "identifier": "url_reputation",
             "description": "Look up Cisco Talos threat intelligence for a given URL",
-            "verbose": "Provides information on a URL's reputation, so you can take appropriate action against untrusted or unwanted resources.",
+            "verbose": "Provides intelligence about an URL, so you can take appropriate actions against untrusted or unwanted resources.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
