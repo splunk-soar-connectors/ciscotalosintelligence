@@ -48,7 +48,7 @@ Validate the asset configuration for connectivity using supplied configuration
 Type: **test**  
 Read only: **True**
 
-Action uses the Cisco Talos API to get a list of the Acceptable Use Policy Categories categories used to classify website content.
+Action uses the Cisco Talos API to get a list of the Acceptable Use Policy Categories used to classify website content.
 
 #### Action Parameters
 No parameters are required for this action
@@ -116,7 +116,7 @@ Look up Cisco Talos threat intelligence for a given URL
 Type: **investigate**  
 Read only: **True**
 
-Provides intelligence about an URL, so you can take appropriate actions against untrusted or unwanted resources.
+Provides intelligence about a URL, so you can take appropriate actions against untrusted or unwanted resources.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
