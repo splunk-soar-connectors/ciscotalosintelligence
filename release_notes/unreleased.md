@@ -1,1 +1,2 @@
 **Unreleased**
+* Add support for SOAR 6.2.2 [PAPP-35323]

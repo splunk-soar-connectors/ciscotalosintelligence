@@ -19,7 +19,7 @@
     "package_name": "phantom_ciscotalosintelligence",
     "fips_compliant": false,
     "main_module": "ciscotalosintelligence_connector.py",
-    "min_phantom_version": "6.3.0",
+    "min_phantom_version": "6.2.2",
     "app_wizard_version": "1.0.0",
     "pip39_dependencies": {
         "wheel": [
