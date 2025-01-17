@@ -2,7 +2,7 @@
 # Cisco Talos Intelligence
 
 Publisher: Splunk  
-Connector Version: 1.0.4  
+Connector Version: 1.0.5  
 Product Vendor: Cisco  
 Product Name: Talos Intelligence  
 Product Version Supported (regex): ".\*"  
