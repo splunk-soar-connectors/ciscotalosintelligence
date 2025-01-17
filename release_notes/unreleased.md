@@ -1,1 +1,2 @@
 **Unreleased**
+* The Cisco Talos Intelligence App is only supported on Splunk Soar Cloud [PAPP-35152]
