@@ -500,7 +500,7 @@ class TalosIntelligenceConnector(BaseConnector):
             "product_version": self.get_app_json()["app_version"],
             "perf_testing": False,
         }
-        if is_dev_env:
+        if is_dev_env():
             self._appinfo["perf_testing"] = True
 
         with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix="test") as temp_file:
