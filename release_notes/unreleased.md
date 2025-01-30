@@ -1,1 +1,2 @@
 **Unreleased**
+* Fix to setting perf_testing variable
