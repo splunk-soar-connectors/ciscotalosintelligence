@@ -1,2 +1,1 @@
 **Unreleased**
-* Clarify the error messages returned when an incorrect data type is passed to an action [PAPP-35448]
