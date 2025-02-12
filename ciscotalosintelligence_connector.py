@@ -278,8 +278,14 @@ class TalosIntelligenceConnector(BaseConnector):
         try:
             ip_addr = ipaddress.ip_address(ip)
             ip_request = self.format_ip_type(ip_addr)
-        except Exception as exc:
-            return action_result.set_status(phantom.APP_ERROR, f"Please provide a valid IP Address. Error: {exc}")
+        except Exception:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                (
+                    f"{ip} is not a valid IPv4 or IPv6 address. Perhaps you meant to use the 'domain reputation' "
+                    "or 'url reputation' action instead of 'ip reputation'?"
+                ),
+            )
 
         payload = {"urls": {"endpoint": [ip_request]}, "app_info": self._appinfo}
 
@@ -303,7 +309,13 @@ class TalosIntelligenceConnector(BaseConnector):
 
         domain = param["domain"]
         if not self._is_valid_domain(domain):
-            return action_result.set_status(phantom.APP_ERROR, "Please provide a valid domain")
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                (
+                    f"{domain} is not a valid domain name. Perhaps you meant to use the "
+                    "'ip reputation' or 'url reputation' action instead of 'domain reputation'?"
+                ),
+            )
 
         url_entry = {"raw_url": domain}
 
@@ -329,7 +341,13 @@ class TalosIntelligenceConnector(BaseConnector):
 
         url = param["url"]
         if not self._is_valid_url(url):
-            return action_result.set_status(phantom.APP_ERROR, "Please provide a valid url")
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                (
+                    f"{url} is not a valid URL. Perhaps you meant to use the 'ip reputation' "
+                    "or 'domain reputation' action instead of 'url reputation'?"
+                ),
+            )
 
         url_entry = {"raw_url": url}
 
