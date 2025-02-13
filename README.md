@@ -6,7 +6,7 @@ Product Vendor: Cisco \
 Product Name: Talos Intelligence \
 Minimum Product Version: 6.2.2
 
-This app provides investigative actions for Cisco Talos Intelligence. It is only supported on Splunk SOAR Cloud
+This app provides investigative actions for Cisco Talos Intelligence. It is only supported on Splunk SOAR Cloud, and it is not supported for FedRAMP customers
 
 ## Cisco Talos Intelligence license for Splunk SOAR (Cloud)
 
