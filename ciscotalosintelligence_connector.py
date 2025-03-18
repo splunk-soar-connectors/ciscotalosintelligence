@@ -48,7 +48,7 @@ class RetVal(tuple):
 
 class TalosIntelligenceConnector(BaseConnector):
     def __init__(self):
-        super(TalosIntelligenceConnector, self).__init__()
+        super().__init__()
 
         self._state = None
 
@@ -81,7 +81,7 @@ class TalosIntelligenceConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
+        message = f"Status Code: {status_code}. Data from server:\n{error_text}\n"
 
         message = message.replace("{", "{{").replace("}", "}}")
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
@@ -94,7 +94,7 @@ class TalosIntelligenceConnector(BaseConnector):
             return RetVal(
                 action_result.set_status(
                     phantom.APP_ERROR,
-                    "Unable to parse JSON response. Error: {0}".format(str(e)),
+                    f"Unable to parse JSON response. Error: {e!s}",
                 ),
                 None,
             )
@@ -104,7 +104,7 @@ class TalosIntelligenceConnector(BaseConnector):
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         # You should process the error returned in the json
-        message = "Error from server. Status Code: {0} Data from server: {1}".format(r.status_code, r.text.replace("{", "{{").replace("}", "}}"))
+        message = "Error from server. Status Code: {} Data from server: {}".format(r.status_code, r.text.replace("{", "{{").replace("}", "}}"))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
@@ -132,7 +132,7 @@ class TalosIntelligenceConnector(BaseConnector):
                 return (
                     action_result.set_status(
                         phantom.APP_ERROR,
-                        "Got retryable http status code {0}".format(r.status_code),
+                        f"Got retryable http status code {r.status_code}",
                     ),
                     r,
                 )
@@ -155,7 +155,7 @@ class TalosIntelligenceConnector(BaseConnector):
             return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
-        message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
+        message = "Can't process response from server. Status Code: {} Data from server: {}".format(
             r.status_code, r.text.replace("{", "{{").replace("}", "}}")
         )
 
@@ -209,7 +209,7 @@ class TalosIntelligenceConnector(BaseConnector):
                     return RetVal(
                         action_result.set_status(
                             phantom.APP_ERROR,
-                            "Error Connecting to server. Details: {0}".format(str(e)),
+                            f"Error Connecting to server. Details: {e!s}",
                         ),
                         resp_json,
                     )
@@ -270,7 +270,7 @@ class TalosIntelligenceConnector(BaseConnector):
             raise Exception(f"{ip_addr} is not valid")
 
     def _handle_ip_reputation(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         ip = param["ip"]
@@ -304,7 +304,7 @@ class TalosIntelligenceConnector(BaseConnector):
         return bool(re.match(regex, domain))
 
     def _handle_domain_reputation(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         domain = param["domain"]
@@ -336,7 +336,7 @@ class TalosIntelligenceConnector(BaseConnector):
         return bool(parsed_url.scheme and parsed_url.netloc)
 
     def _handle_url_reputation(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         url = param["url"]
