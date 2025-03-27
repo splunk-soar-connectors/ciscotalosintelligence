@@ -1,0 +1,90 @@
+Splunk SOAR Cisco Talos Intelligence
+Copyright (c) 2025 Splunk Inc.
+
+Third Party Software Attributions:
+
+Name: anyio
+Version: 4.9.0
+Author: 
+License: MIT
+
+Name: beautifulsoup4
+Version: 4.9.1
+Author: Leonard Richardson
+License: MIT
+
+Name: certifi
+Version: 2025.1.31
+Author: Kenneth Reitz
+License: MPL-2.0
+
+Name: cffi
+Version: 1.17.1
+Author: Armin Rigo, Maciej Fijalkowski
+License: MIT
+
+Name: cryptography
+Version: 42.0.5
+Author: 
+License: Apache-2.0 OR BSD-3-Clause
+
+Name: exceptiongroup
+Version: 1.2.2
+Author: 
+License: 
+
+Name: h11
+Version: 0.14.0
+Author: Nathaniel J. Smith
+License: MIT
+
+Name: h2
+Version: 4.2.0
+Author: 
+License: The MIT License (MIT)
+
+Name: hpack
+Version: 4.1.0
+Author: 
+License: The MIT License (MIT)
+
+Name: httpcore
+Version: 1.0.7
+Author: 
+License: BSD-3-Clause
+
+Name: httpx
+Version: 0.27.2
+Author: 
+License: 
+
+Name: hyperframe
+Version: 6.1.0
+Author: 
+License: The MIT License (MIT)
+
+Name: idna
+Version: 3.10
+Author: 
+License: 
+
+Name: pycparser
+Version: 2.22
+Author: Eli Bendersky
+License: BSD-3-Clause
+
+Name: sniffio
+Version: 1.3.1
+Author: 
+License: MIT OR Apache-2.0
+
+Name: soupsieve
+Version: 2.6
+Author: 
+License: 
+
+Name: typing_extensions
+Version: 4.13.0
+Author: 
+License: 
+
