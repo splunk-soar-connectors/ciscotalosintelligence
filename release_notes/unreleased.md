@@ -1,3 +1,3 @@
 **Unreleased**
 
-* chore: batch changes
+* fix: removing unnecessary fields in the app json interfering with python upgrade
