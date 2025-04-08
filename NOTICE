@@ -1,0 +1,14 @@
+Splunk SOAR App: Cisco Talos Intelligence
+Copyright (c) 2025 Splunk Inc.
+Third Party Software Attributions:
+
+@@@@============================================================================
+
+Library: cryptography - 42.0.5
+Homepage: https://github.com/pyca/cryptography
+License: Apache Software License; BSD License
+License Text:
+
+This software is made available under the terms of *either* of the licenses
+found in LICENSE.APACHE or LICENSE.BSD. Contributions to cryptography are made
+under the terms of *both* these licenses.
