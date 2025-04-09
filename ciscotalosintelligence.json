@@ -1,7 +1,7 @@
 {
     "appid": "7c653487-22c8-4ec1-bca0-16a8b1513c86",
     "name": "Cisco Talos Intelligence",
-    "description": "This app provides investigative actions for Cisco Talos Intelligence. It is only supported on Splunk SOAR Cloud",
+    "description": "This app provides investigative actions for Cisco Talos Intelligence. It is only supported on Splunk SOAR Cloud, and it is not supported for FedRAMP customers",
     "type": "information",
     "product_vendor": "Cisco",
     "logo": "ciscotalosintelligence.svg",
