@@ -347,7 +347,7 @@
             },
             {
                 "module": "h11",
-                "input_file": "wheels/py3/h11-0.14.0-py3-none-any.whl"
+                "input_file": "wheels/py3/h11-0.16.0-py3-none-any.whl"
             },
             {
                 "module": "h2",
@@ -359,7 +359,7 @@
             },
             {
                 "module": "httpcore",
-                "input_file": "wheels/py3/httpcore-1.0.7-py3-none-any.whl"
+                "input_file": "wheels/py3/httpcore-1.0.9-py3-none-any.whl"
             },
             {
                 "module": "httpx",
@@ -395,11 +395,11 @@
             },
             {
                 "module": "exceptiongroup",
-                "input_file": "wheels/py3/exceptiongroup-1.2.2-py3-none-any.whl"
+                "input_file": "wheels/py3/exceptiongroup-1.3.0-py3-none-any.whl"
             },
             {
                 "module": "h11",
-                "input_file": "wheels/py3/h11-0.14.0-py3-none-any.whl"
+                "input_file": "wheels/py3/h11-0.16.0-py3-none-any.whl"
             },
             {
                 "module": "h2",
@@ -411,7 +411,7 @@
             },
             {
                 "module": "httpcore",
-                "input_file": "wheels/py3/httpcore-1.0.7-py3-none-any.whl"
+                "input_file": "wheels/py3/httpcore-1.0.9-py3-none-any.whl"
             },
             {
                 "module": "httpx",
@@ -431,7 +431,7 @@
             },
             {
                 "module": "typing_extensions",
-                "input_file": "wheels/py3/typing_extensions-4.13.1-py3-none-any.whl"
+                "input_file": "wheels/py3/typing_extensions-4.13.2-py3-none-any.whl"
             }
         ]
     }
