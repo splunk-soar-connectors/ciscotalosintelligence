@@ -295,8 +295,7 @@ class TalosIntelligenceConnector(BaseConnector):
 
         summary = action_result.update_summary({})
         threat_level = action_result.get_data()[0]["Threat_Level"]
-        summary["Message"] = f"{ip} has a {threat_level} threat level"
-
+        summary["message"] = f"{ip} has a {threat_level} threat level"
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _is_valid_domain(self, domain):
@@ -328,7 +327,7 @@ class TalosIntelligenceConnector(BaseConnector):
 
         summary = action_result.update_summary({})
         threat_level = action_result.get_data()[0]["Threat_Level"]
-        summary["Message"] = f"{domain} has a {threat_level} threat level"
+        summary["message"] = f"{domain} has a {threat_level} threat level"
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _is_valid_url(self, url):
@@ -360,7 +359,7 @@ class TalosIntelligenceConnector(BaseConnector):
 
         summary = action_result.update_summary({})
         threat_level = action_result.get_data()[0]["Threat_Level"]
-        summary["Message"] = f"{url} has a {threat_level} threat level"
+        summary["message"] = f"{url} has a {threat_level} threat level"
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _query_reputation(self, action_result, payload, observable=None):
