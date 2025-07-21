@@ -7,7 +7,7 @@
     "logo": "ciscotalosintelligence.svg",
     "logo_dark": "ciscotalosintelligence_dark.svg",
     "product_name": "Talos Intelligence",
-    "python_version": "3",
+    "python_version": ["3.9", "3.13"],
     "latest_tested_versions": [
         "Cloud, October 30, 2024"
     ],
