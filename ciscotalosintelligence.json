@@ -7,15 +7,18 @@
     "logo": "ciscotalosintelligence.svg",
     "logo_dark": "ciscotalosintelligence_dark.svg",
     "product_name": "Talos Intelligence",
-    "python_version": ["3.9", "3.13"],
+    "python_version": [
+        "3.9",
+        "3.13"
+    ],
     "latest_tested_versions": [
         "Cloud, October 30, 2024"
     ],
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2025 Splunk Inc.",
-    "app_version": "1.0.11",
-    "utctime_updated": "2025-05-28T17:19:04.219033Z",
+    "app_version": "1.0.12",
+    "utctime_updated": "2025-07-30T17:36:30.099925Z",
     "package_name": "phantom_ciscotalosintelligence",
     "fips_compliant": false,
     "main_module": "ciscotalosintelligence_connector.py",
