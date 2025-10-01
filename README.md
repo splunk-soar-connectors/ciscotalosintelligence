@@ -1,9 +1,9 @@
 # Cisco Talos Intelligence
 
-Publisher: Splunk \
-Connector Version: 1.0.13 \
-Product Vendor: Cisco \
-Product Name: Talos Intelligence \
+Publisher: Splunk <br>
+Connector Version: 1.0.13 <br>
+Product Vendor: Cisco <br>
+Product Name: Talos Intelligence <br>
 Minimum Product Version: 6.2.2
 
 This app provides investigative actions for Cisco Talos Intelligence. It is only supported on Splunk SOAR Cloud, and it is not supported for FedRAMP customers.
@@ -22,16 +22,16 @@ For additional details, see the [Cisco Talos Intelligence article](https://docs.
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[ip reputation](#action-ip-reputation) - Look up Cisco Talos threat intelligence for a given IP address \
-[domain reputation](#action-domain-reputation) - Look up Cisco Talos threat intelligence for a given domain \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[ip reputation](#action-ip-reputation) - Look up Cisco Talos threat intelligence for a given IP address <br>
+[domain reputation](#action-domain-reputation) - Look up Cisco Talos threat intelligence for a given domain <br>
 [url reputation](#action-url-reputation) - Look up Cisco Talos threat intelligence for a given URL
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 Action uses the Cisco Talos API to get a list of the Acceptable Use Policy Categories used to classify website content.
@@ -48,7 +48,7 @@ No Output
 
 Look up Cisco Talos threat intelligence for a given IP address
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Provides intelligence about an IP, so you can take appropriate actions against untrusted or unwanted resources.
@@ -78,7 +78,7 @@ action_result.summary.message | string | | 72.163.4.185 has a Favorable threat l
 
 Look up Cisco Talos threat intelligence for a given domain
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Provides intelligence about a domain, so you can take appropriate actions against untrusted or unwanted resources.
@@ -108,7 +108,7 @@ action_result.summary.message | string | | splunk.com has a Favorable threat lev
 
 Look up Cisco Talos threat intelligence for a given URL
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Provides intelligence about a URL, so you can take appropriate actions against untrusted or unwanted resources.
