@@ -1,1 +1,3 @@
 **Unreleased**
+
+* Improve certificate error handling for expired, not-yet-valid, revoked, and known-invalid certificates. [PAPP-37534]

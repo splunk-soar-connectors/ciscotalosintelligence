@@ -1,6 +1,6 @@
 # File: ciscotalosintelligence_connector.py
 #
-# Copyright (c) 2025 Splunk Inc.
+# Copyright (c) 2025-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import json
 import os
 import random
 import re
+import ssl
 import tempfile
 import textwrap
 import time
@@ -46,6 +47,11 @@ class RetVal(tuple):
         return tuple.__new__(RetVal, (val1, val2))
 
 
+SSL_REVOKED_REASON = "SSLV3_ALERT_CERTIFICATE_REVOKED"
+STATE_KEY_INVALID_CERTIFICATES = "invalid_certificates"
+SUPPORT_CASE_MESSAGE = "Please open a SOAR Cloud support case for assistance."
+
+
 class TalosIntelligenceConnector(BaseConnector):
     def __init__(self):
         super().__init__()
@@ -54,10 +60,116 @@ class TalosIntelligenceConnector(BaseConnector):
 
         self._base_url = None
         self._cert = None
+        self._certificate = None
+        self._certificate_serial_number = None
         self._key = None
 
         self._appinfo = None
         self._catalog_id = 2
+
+    def _format_datetime(self, date_time):
+        return f"{date_time.replace(microsecond=0).isoformat()}Z"
+
+    def _get_invalid_certificates(self):
+        if not isinstance(self._state, dict):
+            self._state = {}
+
+        invalid_certificates = self._state.get(STATE_KEY_INVALID_CERTIFICATES)
+        if not isinstance(invalid_certificates, dict):
+            invalid_certificates = {}
+            self._state[STATE_KEY_INVALID_CERTIFICATES] = invalid_certificates
+
+        return invalid_certificates
+
+    def _remember_invalid_certificate(self, reason):
+        if not self._certificate_serial_number:
+            return
+
+        invalid_certificate = {
+            "reason": reason,
+            "last_seen": self._format_datetime(datetime.utcnow()),
+        }
+
+        if self._certificate:
+            invalid_certificate["not_before"] = self._format_datetime(self._certificate.not_valid_before)
+            invalid_certificate["not_after"] = self._format_datetime(self._certificate.not_valid_after)
+
+        self._get_invalid_certificates()[self._certificate_serial_number] = invalid_certificate
+
+    def _forget_invalid_certificate(self):
+        if not self._certificate_serial_number:
+            return
+
+        self._get_invalid_certificates().pop(self._certificate_serial_number, None)
+
+    def _get_certificate_validity_error(self, now):
+        if now > self._certificate.not_valid_after:
+            return "expired"
+
+        if now < self._certificate.not_valid_before:
+            return "not_yet_valid"
+
+        return None
+
+    def _get_invalid_certificate_message(self, reason):
+        serial_number = self._certificate_serial_number
+
+        if reason == "expired" and self._certificate:
+            return (
+                f"Certificate serial number {serial_number} is expired as of {self._format_datetime(self._certificate.not_valid_after)}. "
+                f"{SUPPORT_CASE_MESSAGE}"
+            )
+
+        if reason == "not_yet_valid" and self._certificate:
+            return (
+                f"Certificate serial number {serial_number} is not valid until {self._format_datetime(self._certificate.not_valid_before)}. "
+                f"{SUPPORT_CASE_MESSAGE}"
+            )
+
+        if reason == "revoked":
+            return f"Certificate serial number {serial_number} has been revoked. {SUPPORT_CASE_MESSAGE}"
+
+        return f"Certificate serial number {serial_number} is known to be invalid. {SUPPORT_CASE_MESSAGE}"
+
+    def _certificate_preflight(self):
+        if not self._certificate or not self._certificate_serial_number:
+            return None
+
+        now = datetime.utcnow()
+        invalid_certificate = self._get_invalid_certificates().get(self._certificate_serial_number)
+        if invalid_certificate:
+            reason = invalid_certificate.get("reason", "invalid")
+            if reason == "not_yet_valid" and now >= self._certificate.not_valid_before:
+                self._forget_invalid_certificate()
+            else:
+                return self._get_invalid_certificate_message(reason)
+
+        reason = self._get_certificate_validity_error(now)
+        if reason:
+            self._remember_invalid_certificate(reason)
+            return self._get_invalid_certificate_message(reason)
+
+        return None
+
+    def _is_revoked_certificate_ssl_error(self, error):
+        current_error = error
+        seen_error_ids = set()
+
+        while current_error and id(current_error) not in seen_error_ids:
+            seen_error_ids.add(id(current_error))
+
+            if isinstance(current_error, ssl.SSLError):
+                ssl_reason = str(getattr(current_error, "reason", "")).upper()
+                if ssl_reason == SSL_REVOKED_REASON or SSL_REVOKED_REASON in str(current_error).upper():
+                    return True
+
+            current_error = current_error.__cause__ or current_error.__context__
+
+        return False
+
+    def _handle_revoked_certificate_error(self, action_result):
+        self._remember_invalid_certificate("revoked")
+        return RetVal(action_result.set_status(phantom.APP_ERROR, self._get_invalid_certificate_message("revoked")), None)
 
     def _process_empty_response(self, response, action_result):
         if response.status_code == 200:
@@ -177,44 +289,52 @@ class TalosIntelligenceConnector(BaseConnector):
                 request_func = getattr(self.client, method)
 
                 r = request_func(url, **kwargs)
-                break
+                return self._process_response(r, action_result, retry)
+            except ssl.SSLError as e:
+                if self._is_revoked_certificate_ssl_error(e):
+                    return self._handle_revoked_certificate_error(action_result)
+
+                connection_error = e
             except Exception as e:
-                self.debug_print(f"Retrying to establish connection to the server for the {i + 1} time")
-                jittered_delay = random.uniform(delay * 0.9, delay * 1.1)
-                time.sleep(jittered_delay)
-                delay = min(delay * 2, 256)
+                if self._is_revoked_certificate_ssl_error(e):
+                    return self._handle_revoked_certificate_error(action_result)
 
-                with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix="test") as temp_file:
-                    cert_string = f"-----BEGIN CERTIFICATE-----\n{self._cert}\n-----END CERTIFICATE-----"
-                    cert = (
-                        f"{cert_string}\n"
-                        "-----BEGIN RSA PRIVATE KEY-----\n"  # pragma: allowlist secret
-                        f"{self._key}\n"
-                        "-----END RSA PRIVATE KEY-----\n"  # pragma: allowlist secret
-                    )
-                    temp_file.write(cert)
-                    temp_file.seek(0)  # Move the file pointer to the beginning for reading
-                    temp_file_path = temp_file.name  # Get the name of the temporary file
-                self.client = httpx.Client(
-                    http2=True,
-                    verify=config.get("verify_server_cert", False),
-                    cert=temp_file_path,
-                    timeout=MAX_REQUEST_TIMEOUT,
+                connection_error = e
+
+            self.debug_print(f"Retrying to establish connection to the server for the {i + 1} time")
+            jittered_delay = random.uniform(delay * 0.9, delay * 1.1)
+            time.sleep(jittered_delay)
+            delay = min(delay * 2, 256)
+
+            with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix="test") as temp_file:
+                cert_string = f"-----BEGIN CERTIFICATE-----\n{self._cert}\n-----END CERTIFICATE-----"
+                cert = (
+                    f"{cert_string}\n"
+                    "-----BEGIN RSA PRIVATE KEY-----\n"  # pragma: allowlist secret
+                    f"{self._key}\n"
+                    "-----END RSA PRIVATE KEY-----\n"  # pragma: allowlist secret
                 )
+                temp_file.write(cert)
+                temp_file.seek(0)  # Move the file pointer to the beginning for reading
+                temp_file_path = temp_file.name  # Get the name of the temporary file
+            self.client = httpx.Client(
+                http2=True,
+                verify=config.get("verify_server_cert", False),
+                cert=temp_file_path,
+                timeout=MAX_REQUEST_TIMEOUT,
+            )
 
-                if os.path.exists(temp_file_path):
-                    os.remove(temp_file_path)
+            if os.path.exists(temp_file_path):
+                os.remove(temp_file_path)
 
-                if i == MAX_CONNECTION_RETIRIES - 1:
-                    return RetVal(
-                        action_result.set_status(
-                            phantom.APP_ERROR,
-                            f"Error Connecting to server. Details: {e!s}",
-                        ),
-                        resp_json,
-                    )
-
-        return self._process_response(r, action_result, retry)
+            if i == MAX_CONNECTION_RETIRIES - 1:
+                return RetVal(
+                    action_result.set_status(
+                        phantom.APP_ERROR,
+                        f"Error Connecting to server. Details: {connection_error!s}",
+                    ),
+                    resp_json,
+                )
 
     def _make_rest_call_helper(self, *args, **kwargs):
         request_delay = 0.25
@@ -258,7 +378,9 @@ class TalosIntelligenceConnector(BaseConnector):
         self.save_progress("Received Metadata")
         self.save_progress("Test Connectivity Passed")
 
-        self._state = {}
+        invalid_certificates = self._get_invalid_certificates() or {}
+        self._state = {STATE_KEY_INVALID_CERTIFICATES: invalid_certificates}
+
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def format_ip_type(self, ip_addr):
@@ -429,7 +551,8 @@ class TalosIntelligenceConnector(BaseConnector):
 
         taxonomy = response["catalogs"][str(self._catalog_id)]
 
-        self._state = {"taxonomy": taxonomy, "taxonomy_version": response["version"]}
+        self._state["taxonomy"] = taxonomy
+        self._state["taxonomy_version"] = response["version"]
 
         return ret_val, taxonomy
 
@@ -439,6 +562,11 @@ class TalosIntelligenceConnector(BaseConnector):
         action_id = self.get_action_identifier()
 
         self.debug_print("action_id", self.get_action_identifier())
+
+        preflight_error = self._certificate_preflight()
+        if preflight_error:
+            action_result = self.add_action_result(ActionResult(dict(param)))
+            return action_result.set_status(phantom.APP_ERROR, preflight_error)
 
         if action_id == "ip_reputation":
             ret_val = self._handle_ip_reputation(param)
@@ -453,12 +581,6 @@ class TalosIntelligenceConnector(BaseConnector):
             ret_val = self._handle_test_connectivity(param)
 
         return ret_val
-
-    def check_certificate_expiry(self, cert):
-        not_before = cert.not_valid_before
-        not_after = cert.not_valid_after
-        now = datetime.utcnow()
-        return not_before <= now <= not_after
 
     def fetch_crls(self, cert):
         try:
@@ -481,7 +603,7 @@ class TalosIntelligenceConnector(BaseConnector):
     def initialize(self):
         # Load the state in initialize, use it to store data
         # that needs to be accessed across actions
-        self._state = self.load_state()
+        self._state = self.load_state() or {}
 
         # get the asset config
         config = self.get_config()
@@ -505,10 +627,8 @@ class TalosIntelligenceConnector(BaseConnector):
             self.debug_print(f"Error when loadig cert {e}")
             return phantom.APP_ERROR
 
-        is_valid = self.check_certificate_expiry(cert)
-        if not is_valid:
-            self.debug_print("Certificate is expired. Please use a valid cert")
-            return phantom.APP_ERROR
+        self._certificate = cert
+        self._certificate_serial_number = format(cert.serial_number, "X")
 
         self._appinfo = {
             "product_family": "splunk",
