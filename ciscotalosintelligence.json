@@ -13,7 +13,7 @@
     ],
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2025-2026 Splunk Inc.",
+    "license": "Copyright (c) 2026 Splunk Inc.",
     "app_version": "1.0.14",
     "utctime_updated": "2025-10-06T20:19:04.429881Z",
     "package_name": "phantom_ciscotalosintelligence",
