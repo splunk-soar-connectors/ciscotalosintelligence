@@ -319,7 +319,7 @@ class TalosIntelligenceConnector(BaseConnector):
                 temp_file_path = temp_file.name  # Get the name of the temporary file
             self.client = httpx.Client(
                 http2=True,
-                verify=config.get("verify_server_cert", False),
+                verify=config.get("verify_server_cert", True),
                 cert=temp_file_path,
                 timeout=MAX_REQUEST_TIMEOUT,
             )
@@ -656,7 +656,7 @@ class TalosIntelligenceConnector(BaseConnector):
         try:
             self.client = httpx.Client(
                 http2=True,
-                verify=config.get("verify_server_cert", False),
+                verify=config.get("verify_server_cert", True),
                 cert=temp_file_path,
                 timeout=MAX_REQUEST_TIMEOUT,
             )
