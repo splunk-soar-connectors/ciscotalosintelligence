@@ -1,7 +1,7 @@
 # Cisco Talos Intelligence
 
 Publisher: Splunk <br>
-Connector Version: 1.0.16 <br>
+Connector Version: 1.0.17 <br>
 Product Vendor: Cisco <br>
 Product Name: Talos Intelligence <br>
 Minimum Product Version: 6.2.2

@@ -1,2 +1,1 @@
 **Unreleased**
-* fix: PSAAS-36009 Updated dependencies
