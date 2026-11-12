@@ -1,3 +1,0 @@
-beautifulsoup4==4.9.1
-cryptography==50.0.0
-httpx[http2]==0.28.1
