@@ -13,9 +13,7 @@
 # limitations under the License.
 from soar_sdk.abstract import SOARClient
 from soar_sdk.app import App
-from soar_sdk.params import Param, Params
-from soar_sdk.action_results import ActionOutput
-from soar_sdk.asset import BaseAsset, AssetField
+from soar_sdk.asset import AssetField, BaseAsset, FieldCategory
 from soar_sdk.logging import getLogger
 
 logger = getLogger()
@@ -25,13 +23,24 @@ class Asset(BaseAsset):
     base_url: str = AssetField(
         description="Base URL provided by Talos.",
         default="https://soar-api.talos.cisco.com",
+        category=FieldCategory.CONNECTIVITY,
     )
     certificate: str = AssetField(
-        description="Certificate contents to authenticate with Talos."
+        description="Certificate contents to authenticate with Talos.",
+        required=True,
+        sensitive=True,
+        category=FieldCategory.CONNECTIVITY,
     )
-    key: str = AssetField(description="Private key to authenticate with Talos.")
-    verify_server_cert: bool | None = AssetField(
-        description="Verify server certificate.", default=True
+    key: str = AssetField(
+        description="Private key to authenticate with Talos.",
+        required=True,
+        sensitive=True,
+        category=FieldCategory.CONNECTIVITY,
+    )
+    verify_server_cert: bool = AssetField(
+        description="Verify server certificate.",
+        default=True,
+        category=FieldCategory.CONNECTIVITY,
     )
 
 
@@ -54,6 +63,7 @@ app = App(
 
 @app.test_connectivity()
 def test_connectivity(soar: SOARClient, asset: Asset) -> None:
+    """Validate the Talos asset by querying Cisco.com reputation."""
     from .helper import app_info, request, REPUTATION_ENDPOINT
 
     metadata = app_info(soar)
@@ -63,92 +73,9 @@ def test_connectivity(soar: SOARClient, asset: Asset) -> None:
         REPUTATION_ENDPOINT,
         {"urls": [{"raw_url": "cisco.com"}], "app_info": metadata},
     )
-    soar.set_message("Test Connectivity Passed")
 
 
-class IpReputationParams(Params):
-    ip: str = Param(
-        description="IP to query", primary=True, default="", cef_types=["ip", "ipv6"]
-    )
-
-
-class IpReputationOutput(ActionOutput):
-    Observable: str
-    Threat_Level: str
-    Threat_Categories: str
-    AUP: str
-
-
-@app.action(
-    description="Look up Cisco Talos threat intelligence for a given IP address",
-    action_type="investigate",
-    verbose="Provides intelligence about an IP, so you can take appropriate actions against untrusted or unwanted resources.",
-)
-def ip_reputation(
-    params: IpReputationParams, soar: SOARClient, asset: Asset
-) -> IpReputationOutput:
-    from .helper import reputation
-
-    result = reputation(asset, soar, params.ip, "ip")
-    soar.set_message(f"{params.ip} has a {result['Threat_Level']} threat level")
-    return IpReputationOutput(**result)
-
-
-class DomainReputationParams(Params):
-    domain: str = Param(
-        description="Domain to query", primary=True, default="", cef_types=["domain"]
-    )
-
-
-class DomainReputationOutput(ActionOutput):
-    Observable: str
-    Threat_Level: str
-    Threat_Categories: str
-    AUP: str
-
-
-@app.action(
-    description="Look up Cisco Talos threat intelligence for a given domain",
-    action_type="investigate",
-    verbose="Provides intelligence about a domain, so you can take appropriate actions against untrusted or unwanted resources.",
-)
-def domain_reputation(
-    params: DomainReputationParams, soar: SOARClient, asset: Asset
-) -> DomainReputationOutput:
-    from .helper import reputation
-
-    result = reputation(asset, soar, params.domain, "domain")
-    soar.set_message(f"{params.domain} has a {result['Threat_Level']} threat level")
-    return DomainReputationOutput(**result)
-
-
-class UrlReputationParams(Params):
-    url: str = Param(
-        description="URL to query", primary=True, default="", cef_types=["url"]
-    )
-
-
-class UrlReputationOutput(ActionOutput):
-    Observable: str
-    Threat_Level: str
-    Threat_Categories: str
-    AUP: str
-
-
-@app.action(
-    description="Look up Cisco Talos threat intelligence for a given URL",
-    action_type="investigate",
-    verbose="Provides intelligence about a URL, so you can take appropriate actions against untrusted or unwanted resources.",
-)
-def url_reputation(
-    params: UrlReputationParams, soar: SOARClient, asset: Asset
-) -> UrlReputationOutput:
-    from .helper import reputation
-
-    result = reputation(asset, soar, params.url, "url")
-    soar.set_message(f"{params.url} has a {result['Threat_Level']} threat level")
-    return UrlReputationOutput(**result)
-
+from .actions import domain_reputation, ip_reputation, make_request, url_reputation  # noqa: F401
 
 if __name__ == "__main__":
     app.cli()

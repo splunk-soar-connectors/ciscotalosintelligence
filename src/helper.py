@@ -25,7 +25,7 @@ REPUTATION_ENDPOINT = "/Talos.Service.URS/QueryReputationV3"
 TAXONOMY_ENDPOINT = "/Talos.Service.TTS/QueryTaxonomyCatalogs"
 
 
-def make_client(asset):
+def make_client(asset, verify_ssl=None):
     cert_pem = (
         "-----BEGIN CERTIFICATE-----\n"  # pragma: allowlist secret
         + "\n".join(
@@ -44,32 +44,52 @@ def make_client(asset):
         cert_path.write_text(cert_pem)
         key_path.write_text(key_pem)
         context = ssl.create_default_context()
-        context.check_hostname = bool(asset.verify_server_cert)
-        context.verify_mode = (
-            ssl.CERT_REQUIRED if asset.verify_server_cert else ssl.CERT_NONE
-        )
+        should_verify = asset.verify_server_cert if verify_ssl is None else verify_ssl
+        context.check_hostname = bool(should_verify)
+        context.verify_mode = ssl.CERT_REQUIRED if should_verify else ssl.CERT_NONE
         context.load_cert_chain(str(cert_path), str(key_path))
         return context
 
 
+def make_request(
+    asset,
+    endpoint,
+    method="POST",
+    headers=None,
+    query=None,
+    body=None,
+    content=None,
+    timeout=5.0,
+    verify_ssl=None,
+):
+    context = make_client(asset, verify_ssl=verify_ssl)
+    with httpx.Client(verify=context, http2=True, timeout=timeout) as client:
+        return client.request(
+            method.upper(),
+            asset.base_url.rstrip("/") + "/" + endpoint.lstrip("/"),
+            headers=headers,
+            params=query,
+            json=body,
+            content=content,
+        )
+
+
 def request(asset, endpoint, payload):
-    context = make_client(asset)
-    with httpx.Client(verify=context, http2=True, timeout=5.0) as client:
-        response = client.post(asset.base_url.rstrip("/") + endpoint, json=payload)
-        if "json" not in response.headers.get("content-type", ""):
-            text = response.text.strip()
-            raise RuntimeError(
-                f"Status Code: {response.status_code}. Data from server:\n{text}"
-            )
-        try:
-            data = response.json()
-        except json.JSONDecodeError as exc:
-            raise RuntimeError(f"Unable to parse JSON response: {exc}") from exc
-        if response.status_code >= 399:
-            raise RuntimeError(
-                f"Error from server. Status Code: {response.status_code} Data from server: {response.text}"
-            )
-        return data
+    response = make_request(asset, endpoint, body=payload)
+    if "json" not in response.headers.get("content-type", ""):
+        text = response.text.strip()
+        raise RuntimeError(
+            f"Status Code: {response.status_code}. Data from server:\n{text}"
+        )
+    try:
+        data = response.json()
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"Unable to parse JSON response: {exc}") from exc
+    if response.status_code >= 399:
+        raise RuntimeError(
+            f"Error from server. Status Code: {response.status_code} Data from server: {response.text}"
+        )
+    return data
 
 
 def app_info(soar):
